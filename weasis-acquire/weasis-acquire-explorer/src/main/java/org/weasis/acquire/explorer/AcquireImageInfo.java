@@ -1,9 +1,9 @@
 /*******************************************************************************
- * Copyright (c) 2016 Weasis Team and others.
+ * Copyright (c) 2009-2018 Weasis Team and others.
  * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
+ * are made available under the terms of the Eclipse Public License v2.0
  * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
+ * http://www.eclipse.org/legal/epl-v20.html
  *
  * Contributors:
  *     Nicolas Roduit - initial API and implementation
@@ -189,7 +189,7 @@ public class AcquireImageInfo {
                 nextValues.isAutoLevel());
             postProcessOpManager.setParamValue(FlipOp.OP_NAME, FlipOp.P_FLIP, nextValues.isFlip());
 
-            if (nextValues.getRatio() != currentValues.getRatio()) {
+            if (!Objects.equals(nextValues.getRatio(), currentValues.getRatio())) {
                 postProcessOpManager.setParamValue(ZoomOp.OP_NAME, ZoomOp.P_RATIO_X, nextValues.getRatio());
                 postProcessOpManager.setParamValue(ZoomOp.OP_NAME, ZoomOp.P_RATIO_Y, nextValues.getRatio());
                 postProcessOpManager.setParamValue(ZoomOp.OP_NAME, ZoomOp.P_INTERPOLATION, ZoomOp.INTERPOLATIONS[1]);
@@ -435,6 +435,7 @@ public class AcquireImageInfo {
                 : TagUtil.toLocalDateTime(date);
             imageElement.setTagNoNull(TagD.get(Tag.ContentDate), dateTime.toLocalDate());
             imageElement.setTagNoNull(TagD.get(Tag.ContentTime), dateTime.toLocalTime());
+            imageElement.setTagNoNull(TagD.get(Tag.ImageComments), file.get().getName());
         }
     }
 }

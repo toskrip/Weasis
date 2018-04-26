@@ -1,9 +1,9 @@
 /*******************************************************************************
- * Copyright (c) 2016 Weasis Team and others.
+ * Copyright (c) 2009-2018 Weasis Team and others.
  * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
+ * are made available under the terms of the Eclipse Public License v2.0
  * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
+ * http://www.eclipse.org/legal/epl-v20.html
  *
  * Contributors:
  *     Nicolas Roduit - initial API and implementation
@@ -21,6 +21,7 @@ import javax.swing.JPanel;
 import javax.swing.JSlider;
 
 import org.weasis.core.api.gui.util.GuiExecutor;
+import org.weasis.core.api.gui.util.SliderChangeListener;
 import org.weasis.core.api.util.FontTools;
 
 /**
@@ -120,7 +121,7 @@ public class SwingHelper {
      * @param max
      * @param nbDiv
      * @return
-     * @sicne 2.5.0
+     * @since 2.5.0
      */
     public static JSlider newSlider(int value, int min, int max, int nbDiv) {
         JSlider slider = newSlider(value, min, max);
@@ -162,7 +163,7 @@ public class SwingHelper {
         });
 
         slider.setLabelTable(table);
-        FontTools.setFont10(slider);
+        SliderChangeListener.setFont(slider, FontTools.getFont10());
         slider.setMinorTickSpacing(1);
         slider.setMajorTickSpacing(spacing);
     }

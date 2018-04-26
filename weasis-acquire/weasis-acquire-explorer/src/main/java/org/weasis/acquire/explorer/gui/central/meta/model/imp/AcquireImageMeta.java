@@ -1,9 +1,9 @@
 /*******************************************************************************
- * Copyright (c) 2016 Weasis Team and others.
+ * Copyright (c) 2009-2018 Weasis Team and others.
  * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
+ * are made available under the terms of the Eclipse Public License v2.0
  * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
+ * http://www.eclipse.org/legal/epl-v20.html
  *
  * Contributors:
  *     Nicolas Roduit - initial API and implementation
@@ -22,8 +22,7 @@ public class AcquireImageMeta extends AcquireMetadataTableModel {
         getTags("weasis.acquire.meta.image.display", "ImageComments,ContentDate,ContentTime"); //$NON-NLS-1$ //$NON-NLS-2$
     private static final TagW[] TAGS_EDITABLE =
         getTags("weasis.acquire.meta.image.edit", "ImageComments,ContentDate,ContentTime"); //$NON-NLS-1$ //$NON-NLS-2$
-    private static final TagW[] TAGS_TO_PUBLISH =
-        getTags("weasis.acquire.meta.image.required", "ContentDate"); //$NON-NLS-1$ //$NON-NLS-2$
+    private static final TagW[] TAGS_TO_PUBLISH = getTags("weasis.acquire.meta.image.required", "ContentDate"); //$NON-NLS-1$ //$NON-NLS-2$
 
     public AcquireImageMeta(AcquireImageInfo imageInfo) {
         super((imageInfo == null) ? null : imageInfo.getImage(), TAGS_TO_DISPLAY, TAGS_EDITABLE, TAGS_TO_PUBLISH);

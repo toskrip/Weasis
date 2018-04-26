@@ -1,12 +1,12 @@
 /*******************************************************************************
- * Copyright (c) 2016 Weasis Team and others.
+ * Copyright (c) 2009-2018 Weasis Team and others.
  * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
+ * are made available under the terms of the Eclipse Public License v2.0
  * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
+ * http://www.eclipse.org/legal/epl-v20.html
  *
  * Contributors:
- *     ${user} - initial API and implementation
+ *     Nicolas Roduit - initial API and implementation
  *******************************************************************************/
 package org.weasis.core.api.service;
 
@@ -25,7 +25,7 @@ import org.weasis.core.api.util.StringUtil;
 
 /**
  * The Class AuditLog allows to write specific traces for the application usage.
- * 
+ *
  */
 public class AuditLog {
     // Share this logger
@@ -40,8 +40,8 @@ public class AuditLog {
     public static final String LOG_PATTERN = "org.apache.sling.commons.log.pattern"; //$NON-NLS-1$
     public static final String LOG_LOGGERS = "org.apache.sling.commons.log.names"; //$NON-NLS-1$
 
-    public static final String MARKER_PERF = "*PERF*";  //$NON-NLS-1$
-    
+    public static final String MARKER_PERF = "*PERF*"; //$NON-NLS-1$
+
     public enum LEVEL {
         TRACE, DEBUG, INFO, WARN, ERROR;
 

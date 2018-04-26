@@ -1,9 +1,9 @@
 /*******************************************************************************
- * Copyright (c) 2016 Weasis Team and others.
+ * Copyright (c) 2009-2018 Weasis Team and others.
  * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
+ * are made available under the terms of the Eclipse Public License v2.0
  * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
+ * http://www.eclipse.org/legal/epl-v20.html
  *
  * Contributors:
  *     Nicolas Roduit - initial API and implementation
@@ -53,7 +53,7 @@ import org.weasis.core.api.util.FontTools;
 import org.weasis.core.api.util.ThreadUtil;
 
 @SuppressWarnings("serial")
-public class Thumbnail extends JLabel {
+public class Thumbnail extends JLabel implements Thumbnailable {
     private static final Logger LOGGER = LoggerFactory.getLogger(Thumbnail.class);
 
     public static final File THUMBNAIL_CACHE_DIR =
@@ -101,6 +101,7 @@ public class Thumbnail extends JLabel {
         buildThumbnail(media, keepMediaCache, opManager);
     }
 
+    @Override
     public void registerListeners() {
         removeMouseAndKeyListener();
     }
@@ -159,7 +160,7 @@ public class Thumbnail extends JLabel {
         ImageIcon icon = new ImageIcon() {
 
             @Override
-            public void paintIcon(Component c, Graphics g, int x, int y) {
+            public synchronized void paintIcon(Component c, Graphics g, int x, int y) {
                 Graphics2D g2d = (Graphics2D) g;
                 int width = thumbnailSize;
                 int height = thumbnailSize;
@@ -198,11 +199,12 @@ public class Thumbnail extends JLabel {
 
     }
 
+    @Override
     public File getThumbnailPath() {
         return thumbnailPath;
     }
 
-    public synchronized BufferedImage getImage(final MediaElement media, final boolean keepMediaCache,
+    protected synchronized BufferedImage getImage(final MediaElement media, final boolean keepMediaCache,
         final OpManager opManager) {
         if ((imageSoftRef == null && readable) || (imageSoftRef != null && imageSoftRef.get() == null)) {
             if (loading.compareAndSet(false, true)) {
@@ -340,6 +342,7 @@ public class Thumbnail extends JLabel {
         }
     }
 
+    @Override
     public void dispose() {
         // Unload image from memory
         if (imageSoftRef != null) {
@@ -354,6 +357,7 @@ public class Thumbnail extends JLabel {
         removeMouseAndKeyListener();
     }
 
+    @Override
     public void removeMouseAndKeyListener() {
         MouseListener[] listener = this.getMouseListeners();
         MouseMotionListener[] motionListeners = this.getMouseMotionListeners();

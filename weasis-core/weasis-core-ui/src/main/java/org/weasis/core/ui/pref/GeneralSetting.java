@@ -1,9 +1,9 @@
 /*******************************************************************************
- * Copyright (c) 2016 Weasis Team and others.
+ * Copyright (c) 2009-2018 Weasis Team and others.
  * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
+ * are made available under the terms of the Eclipse Public License v2.0
  * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
+ * http://www.eclipse.org/legal/epl-v20.html
  *
  * Contributors:
  *     Nicolas Roduit - initial API and implementation
@@ -99,7 +99,8 @@ public class GeneralSetting extends AbstractItemDialogPage {
     private final Component horizontalStrut1 = Box.createHorizontalStrut(10);
     private final Component horizontalStrut2 = Box.createHorizontalStrut(10);
     private final JPanel panel1 = new JPanel();
-    private final JLabel lblStacktraceLimit = new JLabel(Messages.getString("GeneralSetting.stack_limit") + StringUtil.COLON); //$NON-NLS-1$
+    private final JLabel lblStacktraceLimit =
+        new JLabel(Messages.getString("GeneralSetting.stack_limit") + StringUtil.COLON); //$NON-NLS-1$
     private final JComboBox<String> comboBoxStackLimit =
         new JComboBox<>(new String[] { "", "0", "1", "3", "5", "10", "20", "50", "100" }); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$ //$NON-NLS-7$ //$NON-NLS-8$ //$NON-NLS-9$
 
@@ -301,8 +302,8 @@ public class GeneralSetting extends AbstractItemDialogPage {
         panel1.add(lblStacktraceLimit);
 
         int limit = getIntPreferences(AuditLog.LOG_STACKTRACE_LIMIT, 3, null);
-        if (limit > 0
-            && (limit != 1 || limit != 3 || limit != 5 || limit != 10 || limit != 20 || limit != 50 || limit != 100)) {
+        if (limit > 0 && limit != 1 && limit != 3 && limit != 5 && limit != 10 && limit != 20 && limit != 50
+            && limit != 100) {
             comboBoxStackLimit.addItem(Integer.toString(limit));
         }
         comboBoxStackLimit.setSelectedItem(limit >= 0 ? Integer.toString(limit) : "");// $NON-NLS-1$ //$NON-NLS-1$
@@ -468,7 +469,7 @@ public class GeneralSetting extends AbstractItemDialogPage {
             LOGGER.error("Unable to set the Look&Feel", e); //$NON-NLS-1$
         }
         // Fix font issue for displaying some Asiatic characters. Some L&F have special fonts.
-        setUIFont(new javax.swing.plaf.FontUIResource("SansSerif", Font.PLAIN, 12)); //$NON-NLS-1$
+        setUIFont(new javax.swing.plaf.FontUIResource(Font.SANS_SERIF, Font.PLAIN, 12));
         return laf;
     }
 
@@ -484,7 +485,7 @@ public class GeneralSetting extends AbstractItemDialogPage {
             }
         }
         if (laf == null) {
-            if (AppProperties.OPERATING_SYSTEM.startsWith("mac")) { //$NON-NLS-1$ 
+            if (AppProperties.OPERATING_SYSTEM.startsWith("mac")) { //$NON-NLS-1$
                 laf = "com.apple.laf.AquaLookAndFeel"; //$NON-NLS-1$
             } else {
                 // Try to set Nimbus, concurrent thread issue

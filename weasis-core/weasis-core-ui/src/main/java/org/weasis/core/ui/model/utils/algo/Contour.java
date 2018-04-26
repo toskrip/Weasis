@@ -1,9 +1,9 @@
 /*******************************************************************************
- * Copyright (c) 2016 Weasis Team and others.
+ * Copyright (c) 2009-2018 Weasis Team and others.
  * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
+ * are made available under the terms of the Eclipse Public License v2.0
  * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
+ * http://www.eclipse.org/legal/epl-v20.html
  *
  * Contributors:
  *     Nicolas Roduit - initial API and implementation
@@ -21,10 +21,10 @@ import java.util.List;
  */
 public class Contour implements Serializable {
     private static final long serialVersionUID = 9056317484468365515L;
-    
+
     public static final int[] DIRX = { 1, 1, 0, -1, -1, -1, 0, 1 };
     public static final int[] DIRY = { 0, -1, -1, -1, 0, 1, 1, 1 };
-    
+
     private int coordx;
     private int coordy;
     private byte[] codeFreeman;
@@ -132,8 +132,8 @@ public class Contour implements Serializable {
         }
     }
 
-    private static void writeNewPosition(byte[][] matrix, int index, int nextDir, int newPos1, int offset, int xdir, int ydir,
-        byte[] border) {
+    private static void writeNewPosition(byte[][] matrix, int index, int nextDir, int newPos1, int offset, int xdir,
+        int ydir, byte[] border) {
         int[] dirX = DIRX;
         int[] dirY = DIRY;
         // si un pixel avant la couche à écrire ne peut pas être écrit, on abandonne l'écriture

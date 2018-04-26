@@ -1,9 +1,9 @@
 /*******************************************************************************
- * Copyright (c) 2016 Weasis Team and others.
+ * Copyright (c) 2009-2018 Weasis Team and others.
  * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
+ * are made available under the terms of the Eclipse Public License v2.0
  * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
+ * http://www.eclipse.org/legal/epl-v20.html
  *
  * Contributors:
  *     Nicolas Roduit - initial API and implementation
@@ -28,6 +28,7 @@ import org.weasis.acquire.explorer.AcquireImageInfo;
 import org.weasis.acquire.explorer.AcquireManager;
 import org.weasis.acquire.explorer.core.bean.SeriesGroup;
 import org.weasis.acquire.explorer.gui.central.AcquireTabPanel;
+import org.weasis.base.explorer.JIThumbnailCache;
 import org.weasis.base.explorer.list.AThumbnailListPane;
 import org.weasis.base.explorer.list.IThumbnailModel;
 import org.weasis.core.api.media.data.ImageElement;
@@ -42,8 +43,8 @@ public class AcquireCentralTumbnailPane<E extends MediaElement> extends AThumbna
 
     private static final Logger LOGGER = LoggerFactory.getLogger(AcquireCentralTumbnailPane.class);
 
-    public AcquireCentralTumbnailPane(List<E> list) {
-        super(new AcquireCentralThumnailList<E>());
+    public AcquireCentralTumbnailPane(List<E> list, JIThumbnailCache thumbCache) {
+        super(new AcquireCentralThumnailList<E>(thumbCache));
         setList(list);
         setTransferHandler(new SequenceHandler());
     }
@@ -72,10 +73,10 @@ public class AcquireCentralTumbnailPane<E extends MediaElement> extends AThumbna
             repaintList();
         }
     }
-    
+
     public void repaintList() {
         // Require to repaint the scroll pane correctly (otherwise not all the elements of JList are repainted)
-        if(thumbnailList.asComponent() instanceof JComponent){
+        if (thumbnailList.asComponent() instanceof JComponent) {
             ((JComponent) thumbnailList.asComponent()).updateUI();
         }
     }
@@ -108,7 +109,6 @@ public class AcquireCentralTumbnailPane<E extends MediaElement> extends AThumbna
             return false;
         }
 
-        @SuppressWarnings({ "unchecked", "rawtypes" })
         @Override
         public boolean importData(TransferSupport support) {
             if (!canImport(support)) {
@@ -155,21 +155,19 @@ public class AcquireCentralTumbnailPane<E extends MediaElement> extends AThumbna
             return true;
         }
 
-        @SuppressWarnings("rawtypes")
         private void addToSerie(MediaElement media) {
             if (media instanceof ImageElement) {
                 AcquireCentralThumnailList tumbList =
                     (AcquireCentralThumnailList) AcquireCentralTumbnailPane.this.thumbnailList;
                 AcquireImageInfo info = AcquireManager.findByImage((ImageElement) media);
                 if (info != null) {
-                    SeriesGroup seriesGroup = Optional.ofNullable(tumbList.getSelectedSerie()).map(b -> b.getSerie())
-                        .orElseGet(AcquireManager::getDefaultSeries);
+                    SeriesGroup seriesGroup =
+                        Optional.ofNullable(tumbList.getSelectedSerie()).map(b -> b.getSerie()).orElse(null);
                     AcquireManager.importImage(info, seriesGroup, 0);
                 }
             }
         }
 
-        @SuppressWarnings("rawtypes")
         private boolean dropDFiles(List<File> files) {
             if (files != null) {
                 for (File file : files) {

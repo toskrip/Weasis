@@ -1,9 +1,9 @@
 /*******************************************************************************
- * Copyright (c) 2016 Weasis Team and others.
+ * Copyright (c) 2009-2018 Weasis Team and others.
  * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
+ * are made available under the terms of the Eclipse Public License v2.0
  * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
+ * http://www.eclipse.org/legal/epl-v20.html
  *
  * Contributors:
  *     Nicolas Roduit - initial API and implementation
@@ -178,7 +178,7 @@ public class PolylineGraphic extends AbstractDragGraphic {
 
     protected Double getPerimeter(List<Point2D.Double> handlePointList) {
         if (handlePointList.size() > 1) {
-            Double perimeter = 0d;
+            double perimeter = 0d;
             Point2D.Double pLast = handlePointList.get(0);
             for (Point2D.Double p2 : handlePointList) {
                 perimeter += pLast.distance(p2);

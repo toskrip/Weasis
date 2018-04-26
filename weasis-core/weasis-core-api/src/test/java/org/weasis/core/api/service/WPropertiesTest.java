@@ -1,12 +1,12 @@
 /*******************************************************************************
- * Copyright (c) 2016 Weasis Team and others.
+ * Copyright (c) 2009-2018 Weasis Team and others.
  * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
+ * are made available under the terms of the Eclipse Public License v2.0
  * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
+ * http://www.eclipse.org/legal/epl-v20.html
  *
  * Contributors:
- *     ${user} - initial API and implementation
+ *     Nicolas Roduit - initial API and implementation
  *******************************************************************************/
 package org.weasis.core.api.service;
 
@@ -15,16 +15,7 @@ import java.awt.Color;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.Mock;
-import org.osgi.framework.BundleContext;
-import org.powermock.api.mockito.PowerMockito;
-import org.powermock.core.classloader.annotations.PrepareForTest;
-import org.powermock.modules.junit4.PowerMockRunner;
-import org.weasis.core.api.gui.util.AppProperties;
 
-@RunWith(PowerMockRunner.class)
-@PrepareForTest(AppProperties.class)
 public class WPropertiesTest {
     private static final String MAGENTA = "ff00ff"; //$NON-NLS-1$
     private static final String MAGENTA_ALPHA = "ffff00ff"; //$NON-NLS-1$
@@ -32,15 +23,10 @@ public class WPropertiesTest {
     private static final String GREY_ALPHA = "80808080"; //$NON-NLS-1$
     private static final Color COLOR_ALPHA = new Color(128, 128, 128, 128);
 
-    @Mock
-    BundleContext context;
-    
     @Before
     public void setUp() {
-        PowerMockito.mockStatic(AppProperties.class);
-        PowerMockito.when(AppProperties.getBundleContext(null)).thenReturn(context);
     }
-    
+
     @Test
     public void testSetPropertyString() {
         WProperties prop = new WProperties();

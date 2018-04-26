@@ -1,9 +1,9 @@
 /*******************************************************************************
- * Copyright (c) 2016 Weasis Team and others.
+ * Copyright (c) 2009-2018 Weasis Team and others.
  * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
+ * are made available under the terms of the Eclipse Public License v2.0
  * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
+ * http://www.eclipse.org/legal/epl-v20.html
  *
  * Contributors:
  *     Nicolas Roduit - initial API and implementation
@@ -23,7 +23,7 @@ public interface OpManager extends OpEventListener, Copyable<OpManager> {
     void clearNodeParams();
 
     void clearNodeIOCache();
-    
+
     List<ImageOpNode> getOperations();
 
     void setFirstNode(RenderedImage imgSource);
@@ -45,7 +45,7 @@ public interface OpManager extends OpEventListener, Copyable<OpManager> {
     boolean setParamValue(String opName, String param, Object value);
 
     void removeParam(String opName, String param);
-    
+
     default boolean needProcessing() {
         for (ImageOpNode op : getOperations()) {
             if (op.getParam(Param.INPUT_IMG) == null || op.getParam(Param.OUTPUT_IMG) == null) {
@@ -54,6 +54,5 @@ public interface OpManager extends OpEventListener, Copyable<OpManager> {
         }
         return false;
     }
-
 
 }

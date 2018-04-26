@@ -1,9 +1,9 @@
 /*******************************************************************************
- * Copyright (c) 2016 Weasis Team and others.
+ * Copyright (c) 2009-2018 Weasis Team and others.
  * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
+ * are made available under the terms of the Eclipse Public License v2.0
  * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
+ * http://www.eclipse.org/legal/epl-v20.html
  *
  * Contributors:
  *     Nicolas Roduit - initial API and implementation
@@ -52,7 +52,6 @@ import org.weasis.core.ui.docking.DockableTool;
 import org.weasis.core.ui.docking.UIManager;
 import org.weasis.core.ui.editor.SeriesViewerEvent;
 import org.weasis.core.ui.editor.SeriesViewerEvent.EVENT;
-import org.weasis.core.ui.editor.SeriesViewerListener;
 import org.weasis.core.ui.editor.image.ImageViewerEventManager;
 import org.weasis.core.ui.editor.image.ImageViewerPlugin;
 import org.weasis.core.ui.editor.image.SynchView;
@@ -81,8 +80,7 @@ public class SRContainer extends ImageViewerPlugin<DicomImageElement> implements
         Collections.synchronizedList(new ArrayList<GridBagLayoutModel>());
 
     public static final GridBagLayoutModel VIEWS_1x1 = new GridBagLayoutModel("1x1", //$NON-NLS-1$
-        "1x1", 1, 1, SRView.class.getName(), new ImageIcon(ImageViewerPlugin.class //$NON-NLS-1$
-            .getResource("/icon/22x22/layout1x1.png"))); //$NON-NLS-1$
+        "1x1", 1, 1, SRView.class.getName()); //$NON-NLS-1$
 
     static {
         LAYOUT_LIST.add(VIEWS_1x1);
@@ -277,11 +275,7 @@ public class SRContainer extends ImageViewerPlugin<DicomImageElement> implements
     public JComponent createUIcomponent(String clazz) {
         try {
             // FIXME use classloader.loadClass or injection
-            Class<?> cl = Class.forName(clazz);
-            JComponent component = (JComponent) cl.newInstance();
-            if (component instanceof SeriesViewerListener) {
-                eventManager.addSeriesViewerListener((SeriesViewerListener) component);
-            }
+            JComponent component = buildInstance(Class.forName(clazz));
             if (component instanceof SRView) {
                 srview = (SRView) component;
             }
@@ -309,7 +303,7 @@ public class SRContainer extends ImageViewerPlugin<DicomImageElement> implements
         if (srview != null) {
             JFrame frame = new JFrame(org.weasis.dicom.explorer.Messages.getString("DicomExplorer.dcmInfo")); //$NON-NLS-1$
             frame.setSize(500, 630);
-            DicomFieldsView view = new DicomFieldsView();
+            DicomFieldsView view = new DicomFieldsView(this);
             view.changingViewContentEvent(new SeriesViewerEvent(this, srview.getSeries(),
                 DicomModel.getFirstSpecialElement(srview.getSeries(), DicomSpecialElement.class), EVENT.SELECT));
             JPanel panel = new JPanel();

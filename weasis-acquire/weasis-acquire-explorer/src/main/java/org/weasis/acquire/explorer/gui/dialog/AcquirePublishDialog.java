@@ -1,9 +1,9 @@
 /*******************************************************************************
- * Copyright (c) 2016 Weasis Team and others.
+ * Copyright (c) 2009-2018 Weasis Team and others.
  * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
+ * are made available under the terms of the Eclipse Public License v2.0
  * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
+ * http://www.eclipse.org/legal/epl-v20.html
  *
  * Contributors:
  *     Nicolas Roduit - initial API and implementation
@@ -35,6 +35,7 @@ import javax.swing.JPanel;
 import javax.swing.JProgressBar;
 import javax.swing.SwingWorker;
 import javax.swing.SwingWorker.StateValue;
+import javax.swing.WindowConstants;
 import javax.swing.border.EmptyBorder;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.TreePath;
@@ -123,13 +124,14 @@ public class AcquirePublishDialog extends JDialog {
     private final JComboBox<AbstractDicomNode> comboNode = new JComboBox<>();
 
     public AcquirePublishDialog(AcquirePublishPanel publishPanel) {
-        super(WinUtil.getParentWindow(publishPanel), Messages.getString("AcquirePublishDialog.publication"), ModalityType.APPLICATION_MODAL);  //$NON-NLS-1$
+        super(WinUtil.getParentWindow(publishPanel), Messages.getString("AcquirePublishDialog.publication"), //$NON-NLS-1$
+            ModalityType.APPLICATION_MODAL);
         this.publishPanel = publishPanel;
 
         setContentPane(initContent());
         publishTree.getTree().addCheckingPath(new TreePath(publishTree.getModel().getRootNode().getPath()));
 
-        setDefaultCloseOperation(JDialog.DO_NOTHING_ON_CLOSE);
+        setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
         addWindowListener(new WindowAdapter() {
             @Override
             public void windowClosing(WindowEvent we) {
@@ -210,7 +212,7 @@ public class AcquirePublishDialog extends JDialog {
         AbstractDicomNode.addTooltipToComboList(comboNode);
 
         if (!StringUtil.hasText(BundleTools.SYSTEM_PREFERENCES.getProperty("weasis.acquire.dest.host"))) { //$NON-NLS-1$
-            DefaultDicomNode.loadDicomNodes(comboNode, AbstractDicomNode.Type.DICOM, UsageType.STORAGE);
+            AbstractDicomNode.loadDicomNodes(comboNode, AbstractDicomNode.Type.DICOM, UsageType.STORAGE);
             if (comboNode.getItemCount() == 0) {
                 comboNode.addItem(getDestinationConfiguration());
             }
@@ -246,7 +248,7 @@ public class AcquirePublishDialog extends JDialog {
 
         if (toPublish.isEmpty()) {
             JOptionPane.showMessageDialog(this, Messages.getString("AcquirePublishDialog.select_one_msg"), //$NON-NLS-1$
-                this.getTitle(), JOptionPane.ERROR_MESSAGE); 
+                this.getTitle(), JOptionPane.ERROR_MESSAGE);
             return;
         }
 
@@ -264,8 +266,8 @@ public class AcquirePublishDialog extends JDialog {
             }
         }
         if (!publishable) {
-            JOptionPane.showMessageDialog(this, Messages.getString("AcquirePublishDialog.pub_warn_msg"),  //$NON-NLS-1$
-                this.getTitle(), JOptionPane.ERROR_MESSAGE); 
+            JOptionPane.showMessageDialog(this, Messages.getString("AcquirePublishDialog.pub_warn_msg"), //$NON-NLS-1$
+                this.getTitle(), JOptionPane.ERROR_MESSAGE);
             return;
         }
 
@@ -286,11 +288,11 @@ public class AcquirePublishDialog extends JDialog {
         ActionListener taskCancelActionListener = e -> dicomizeTask.cancel(true);
 
         dicomizeTask.addPropertyChangeListener(evt -> {
-            if ("progress" == evt.getPropertyName()) { //$NON-NLS-1$
+            if ("progress".equals(evt.getPropertyName())) { //$NON-NLS-1$
                 int progress = (Integer) evt.getNewValue();
                 progressBar.setValue(progress);
 
-            } else if ("state" == evt.getPropertyName()) { //$NON-NLS-1$
+            } else if ("state".equals(evt.getPropertyName())) { //$NON-NLS-1$
 
                 if (StateValue.STARTED == evt.getNewValue()) {
                     resolutionPane.setVisible(false);
@@ -356,8 +358,8 @@ public class AcquirePublishDialog extends JDialog {
         return acqImg -> {
             PlanarImage img = acqImg.getImage().getImage(acqImg.getPostProcessOpManager());
 
-            Integer width = img.getWidth();
-            Integer height = img.getHeight();
+            int width = img.getWidth();
+            int height = img.getHeight();
 
             return width > Resolution.ULTRA_HD.maxSize || height > Resolution.ULTRA_HD.maxSize;
         };

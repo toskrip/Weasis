@@ -1,9 +1,9 @@
 /*******************************************************************************
- * Copyright (c) 2016 Weasis Team and others.
+ * Copyright (c) 2009-2018 Weasis Team and others.
  * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
+ * are made available under the terms of the Eclipse Public License v2.0
  * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
+ * http://www.eclipse.org/legal/epl-v20.html
  *
  * Contributors:
  *     Nicolas Roduit - initial API and implementation
@@ -14,7 +14,7 @@ import java.awt.color.ColorSpace;
 
 public class CIELab extends ColorSpace {
     private static final long serialVersionUID = -8341937056180131312L;
-    
+
     private static final ColorSpace CIEXYZ = ColorSpace.getInstance(ColorSpace.CS_CIEXYZ);
     private static final double N = 4.0 / 29.0;
 
@@ -24,6 +24,9 @@ public class CIELab extends ColorSpace {
 
     private static class Holder {
         static final CIELab INSTANCE = new CIELab();
+
+        private Holder() {
+        }
     }
 
     public static CIELab getInstance() {

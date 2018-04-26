@@ -1,9 +1,9 @@
 /*******************************************************************************
- * Copyright (c) 2016 Weasis Team and others.
+ * Copyright (c) 2009-2018 Weasis Team and others.
  * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
+ * are made available under the terms of the Eclipse Public License v2.0
  * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
+ * http://www.eclipse.org/legal/epl-v20.html
  *
  * Contributors:
  *     Nicolas Roduit - initial API and implementation
@@ -12,7 +12,6 @@ package org.weasis.base.explorer.list;
 
 import java.awt.Dimension;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.ExecutorService;
@@ -31,10 +30,10 @@ import org.weasis.core.ui.editor.image.DefaultView2d;
 
 @SuppressWarnings("serial")
 public abstract class AThumbnailListPane<E extends MediaElement> extends JScrollPane implements IThumbnailListPane<E> {
-    protected final IThumbnailList<E> thumbnailList;
+    protected final ThumbnailList<E> thumbnailList;
     protected final ExecutorService pool;
 
-    public AThumbnailListPane(IThumbnailList<E> thumbList) {
+    public AThumbnailListPane(ThumbnailList<E> thumbList) {
         super(thumbList.asComponent(), ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED,
             ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
         this.pool = ThreadUtil.buildNewSingleThreadExecutor("Thumbnail List"); //$NON-NLS-1$
@@ -43,7 +42,7 @@ public abstract class AThumbnailListPane<E extends MediaElement> extends JScroll
         this.thumbnailList.addListSelectionListener(new JIListSelectionAdapter());
         this.thumbnailList.registerListeners();
 
-        this.setPreferredSize(new Dimension(200,200));
+        this.setPreferredSize(new Dimension(200, 200));
         this.setAutoscrolls(true);
     }
 
@@ -114,16 +113,11 @@ public abstract class AThumbnailListPane<E extends MediaElement> extends JScroll
     }
 
     @Override
-    public void loadDirectory(String pathname) {
-        loadDirectory(Paths.get(pathname));
-    }
-
-    @Override
     public List<E> getSelectedValuesList() {
         return thumbnailList.getSelectedValuesList();
     }
 
-    public IThumbnailList<E> getThumbnailList() {
+    public ThumbnailList<E> getThumbnailList() {
         return thumbnailList;
     }
 }

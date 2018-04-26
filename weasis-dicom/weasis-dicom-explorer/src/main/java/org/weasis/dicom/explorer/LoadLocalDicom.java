@@ -1,9 +1,9 @@
 /*******************************************************************************
- * Copyright (c) 2016 Weasis Team and others.
+ * Copyright (c) 2009-2018 Weasis Team and others.
  * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
+ * are made available under the terms of the Eclipse Public License v2.0
  * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
+ * http://www.eclipse.org/legal/epl-v20.html
  *
  * Contributors:
  *     Nicolas Roduit - initial API and implementation
@@ -143,7 +143,7 @@ public class LoadLocalDicom extends ExplorerTask<Boolean, String> {
                 LOGGER.info("Adding patient: {}", patient); //$NON-NLS-1$
             } else {
                 patient = dicomModel.getParent(study, DicomModel.patient);
-                LOGGER.warn("DICOM patient attributes are inconsitent! Name or ID is different within an exam."); //$NON-NLS-1$
+                LOGGER.warn("DICOM patient attributes are inconsistent! Name or ID is different within an exam."); //$NON-NLS-1$
             }
         }
 
@@ -233,8 +233,9 @@ public class LoadLocalDicom extends ExplorerTask<Boolean, String> {
                     if (DicomModel.isSpecialModality(dicomSeries)) {
                         dicomModel.addSpecialModality(dicomSeries);
                         Arrays.stream(medias).filter(DicomSpecialElement.class::isInstance)
-                        .map(DicomSpecialElement.class::cast).findFirst().ifPresent(d -> dicomModel.firePropertyChange(
-                            new ObservableEvent(ObservableEvent.BasicAction.UPDATE, dicomModel, null, d)));
+                            .map(DicomSpecialElement.class::cast).findFirst()
+                            .ifPresent(d -> dicomModel.firePropertyChange(
+                                new ObservableEvent(ObservableEvent.BasicAction.UPDATE, dicomModel, null, d)));
                     }
 
                     // If Split series or special DICOM element update the explorer view and View2DContainer

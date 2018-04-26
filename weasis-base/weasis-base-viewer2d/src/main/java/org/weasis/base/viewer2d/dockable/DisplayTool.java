@@ -1,9 +1,9 @@
 /*******************************************************************************
- * Copyright (c) 2016 Weasis Team and others.
+ * Copyright (c) 2009-2018 Weasis Team and others.
  * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
+ * are made available under the terms of the Eclipse Public License v2.0
  * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
+ * http://www.eclipse.org/legal/epl-v20.html
  *
  * Contributors:
  *     Nicolas Roduit - initial API and implementation
@@ -35,7 +35,7 @@ import org.weasis.base.viewer2d.View2dContainer;
 import org.weasis.core.api.gui.util.ActionW;
 import org.weasis.core.api.gui.util.JMVUtils;
 import org.weasis.core.api.media.data.ImageElement;
-import org.weasis.core.api.media.data.Thumbnail;
+import org.weasis.core.api.media.data.Thumbnailable;
 import org.weasis.core.ui.docking.PluginTool;
 import org.weasis.core.ui.editor.SeriesViewerEvent;
 import org.weasis.core.ui.editor.SeriesViewerEvent.EVENT;
@@ -166,8 +166,8 @@ public class DisplayTool extends PluginTool implements SeriesViewerListener {
                     if (cps > 0) {
                         Component cp = panelFoot.getComponent(0);
                         if (cp != panner) {
-                            if (cp instanceof Thumbnail) {
-                                ((Thumbnail) cp).removeMouseAndKeyListener();
+                            if (cp instanceof Thumbnailable) {
+                                ((Thumbnailable) cp).removeMouseAndKeyListener();
                             }
                             panner.registerListeners();
                             panelFoot.removeAll();
@@ -291,7 +291,6 @@ public class DisplayTool extends PluginTool implements SeriesViewerListener {
                 }
             }
         }
-        return;
     }
 
 }

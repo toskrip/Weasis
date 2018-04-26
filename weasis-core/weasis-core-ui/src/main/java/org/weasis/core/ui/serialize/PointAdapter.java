@@ -1,9 +1,9 @@
 /*******************************************************************************
- * Copyright (c) 2016 Weasis Team and others.
+ * Copyright (c) 2009-2018 Weasis Team and others.
  * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
+ * are made available under the terms of the Eclipse Public License v2.0
  * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
+ * http://www.eclipse.org/legal/epl-v20.html
  *
  * Contributors:
  *     Nicolas Roduit - initial API and implementation
@@ -17,7 +17,7 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.adapters.XmlAdapter;
 
 public class PointAdapter {
-    
+
     private PointAdapter() {
     }
 
@@ -32,7 +32,7 @@ public class PointAdapter {
 
         @Override
         public Pt marshal(Point2D v) throws Exception {
-            if(Objects.isNull(v)) {
+            if (Objects.isNull(v)) {
                 return null;
             }
             Pt p = new Pt();

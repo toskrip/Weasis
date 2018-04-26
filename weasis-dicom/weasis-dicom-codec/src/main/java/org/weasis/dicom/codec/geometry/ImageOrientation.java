@@ -1,3 +1,13 @@
+/*******************************************************************************
+ * Copyright (c) 2009-2018 Weasis Team and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v2.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v20.html
+ *
+ * Contributors:
+ *     Nicolas Roduit - initial API and implementation
+ *******************************************************************************/
 package org.weasis.dicom.codec.geometry;
 
 import org.dcm4che3.data.Tag;
@@ -224,6 +234,24 @@ public abstract class ImageOrientation {
         double colX, double colY, double colZ) {
         return makePatientOrientationFromPatientRelativeDirectionCosine(rowX, rowY, rowZ) + "\\" //$NON-NLS-1$
             + makePatientOrientationFromPatientRelativeDirectionCosine(colX, colY, colZ);
+    }
+
+    public static final char getImageOrientationOposite(char c) {
+        switch (c) {
+            case 'L':
+                return 'R';
+            case 'R':
+                return 'L';
+            case 'P':
+                return 'A';
+            case 'A':
+                return 'P';
+            case 'H':
+                return 'F';
+            case 'F':
+                return 'H';
+        }
+        return ' ';
     }
 
     public static double[] computeNormalVectorOfPlan(double[] vector) {

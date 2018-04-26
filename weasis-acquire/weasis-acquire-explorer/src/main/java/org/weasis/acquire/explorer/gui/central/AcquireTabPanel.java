@@ -1,9 +1,9 @@
 /*******************************************************************************
- * Copyright (c) 2016 Weasis Team and others.
+ * Copyright (c) 2009-2018 Weasis Team and others.
  * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
+ * are made available under the terms of the Eclipse Public License v2.0
  * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
+ * http://www.eclipse.org/legal/epl-v20.html
  *
  * Contributors:
  *     Nicolas Roduit - initial API and implementation
@@ -34,6 +34,7 @@ import org.weasis.acquire.explorer.AcquireImageInfo;
 import org.weasis.acquire.explorer.AcquireManager;
 import org.weasis.acquire.explorer.core.bean.SeriesGroup;
 import org.weasis.acquire.explorer.gui.control.AcquirePublishPanel;
+import org.weasis.base.explorer.JIThumbnailCache;
 import org.weasis.dicom.codec.TagD;
 
 @SuppressWarnings("serial")
@@ -47,12 +48,12 @@ public class AcquireTabPanel extends JPanel {
 
     private SerieButton selected;
 
-    public AcquireTabPanel() {
+    public AcquireTabPanel(JIThumbnailCache thumbCache) {
         setLayout(new BorderLayout());
         btnGrp = new ButtonGroup();
 
         serieList = new SerieButtonList();
-        imageList = new AcquireCentralImagePanel(this);
+        imageList = new AcquireCentralImagePanel(this, thumbCache);
         JPanel seriesPanel = new JPanel(new BorderLayout());
         seriesPanel.add(serieList, BorderLayout.CENTER);
         seriesPanel.add(new AcquirePublishPanel(), BorderLayout.SOUTH);
@@ -229,7 +230,7 @@ public class AcquireTabPanel extends JPanel {
         imageList.refreshGUI();
         serieList.refreshGUI();
     }
-    
+
     public void refreshInfoGUI() {
         imageList.refreshInfoGUI();
     }
@@ -239,6 +240,10 @@ public class AcquireTabPanel extends JPanel {
 
         medias.forEach(m -> m.setSeries(seriesGroup));
         updateSerie(seriesGroup, AcquireManager.findbySeries(seriesGroup));
+    }
+
+    public void updateSeriesFromGlobaTags() {
+        btnMap.keySet().forEach(g -> g.updateDicomTags());
     }
 
     public void moveElementsByDate(List<AcquireImageInfo> medias) {

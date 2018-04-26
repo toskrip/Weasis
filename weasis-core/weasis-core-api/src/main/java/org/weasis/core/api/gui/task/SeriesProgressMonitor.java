@@ -1,9 +1,9 @@
 /*******************************************************************************
- * Copyright (c) 2016 Weasis Team and others.
+ * Copyright (c) 2009-2018 Weasis Team and others.
  * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
+ * are made available under the terms of the Eclipse Public License v2.0
  * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
+ * http://www.eclipse.org/legal/epl-v20.html
  *
  * Contributors:
  *     Nicolas Roduit - initial API and implementation
@@ -56,7 +56,7 @@ public class SeriesProgressMonitor extends FilterInputStream {
     @Override
     public int read() throws IOException {
         if (isLoadingSeriesCanceled()) {
-            InterruptedIOException exc = new InterruptedIOException(INTERUPTION_LABEL); 
+            InterruptedIOException exc = new InterruptedIOException(INTERUPTION_LABEL);
             exc.bytesTransferred = nread;
             series.setFileSize(series.getFileSize() - nread);
             nread = 0;
@@ -74,7 +74,7 @@ public class SeriesProgressMonitor extends FilterInputStream {
     @Override
     public int read(byte[] b) throws IOException {
         if (isLoadingSeriesCanceled()) {
-            InterruptedIOException exc = new InterruptedIOException(INTERUPTION_LABEL); 
+            InterruptedIOException exc = new InterruptedIOException(INTERUPTION_LABEL);
             exc.bytesTransferred = nread;
             series.setFileSize(series.getFileSize() - nread);
             nread = 0;
@@ -91,7 +91,7 @@ public class SeriesProgressMonitor extends FilterInputStream {
     @Override
     public int read(byte[] b, int off, int len) throws IOException {
         if (isLoadingSeriesCanceled()) {
-            InterruptedIOException exc = new InterruptedIOException(INTERUPTION_LABEL); 
+            InterruptedIOException exc = new InterruptedIOException(INTERUPTION_LABEL);
             exc.bytesTransferred = nread;
             series.setFileSize(series.getFileSize() - nread);
             nread = 0;

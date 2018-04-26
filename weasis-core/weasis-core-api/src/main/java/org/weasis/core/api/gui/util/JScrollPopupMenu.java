@@ -1,5 +1,16 @@
+/*******************************************************************************
+ * Copyright (c) 2009-2018 Weasis Team and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v2.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v20.html
+ *
+ * Contributors:
+ *     Nicolas Roduit - initial API and implementation
+ *******************************************************************************/
 package org.weasis.core.api.gui.util;
 
+import java.awt.Adjustable;
 import java.awt.Component;
 import java.awt.Container;
 import java.awt.Dimension;
@@ -15,7 +26,7 @@ import javax.swing.JPopupMenu;
 import javax.swing.JScrollBar;
 
 public class JScrollPopupMenu extends JPopupMenu {
-    
+
     protected int maximumVisibleRows = 10;
     private JScrollBar popupScrollBar;
 
@@ -42,10 +53,9 @@ public class JScrollPopupMenu extends JPopupMenu {
         });
     }
 
-
     protected JScrollBar getScrollBar() {
         if (popupScrollBar == null) {
-            popupScrollBar = new JScrollBar(JScrollBar.VERTICAL);
+            popupScrollBar = new JScrollBar(Adjustable.VERTICAL);
             popupScrollBar.addAdjustmentListener(new AdjustmentListener() {
                 @Override
                 public void adjustmentValueChanged(AdjustmentEvent e) {

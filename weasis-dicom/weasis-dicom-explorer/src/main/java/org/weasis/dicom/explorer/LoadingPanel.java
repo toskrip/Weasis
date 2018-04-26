@@ -1,9 +1,9 @@
 /*******************************************************************************
- * Copyright (c) 2016 Weasis Team and others.
+ * Copyright (c) 2009-2018 Weasis Team and others.
  * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
+ * are made available under the terms of the Eclipse Public License v2.0
  * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
+ * http://www.eclipse.org/legal/epl-v20.html
  *
  * Contributors:
  *     Nicolas Roduit - initial API and implementation
@@ -20,7 +20,7 @@ public class LoadingPanel extends JPanel {
 
     private static final long serialVersionUID = 1L;
 
-    private final ArrayList<ExplorerTask<?,?>> tasks = new ArrayList<>();
+    private final ArrayList<ExplorerTask<?, ?>> tasks = new ArrayList<>();
     private final LoadingTaskPanel globalDownloadTask = new LoadingTaskPanel(true);
 
     public LoadingPanel() {
@@ -29,7 +29,7 @@ public class LoadingPanel extends JPanel {
         this.setAlignmentY(TOP_ALIGNMENT);
     }
 
-    public boolean addTask(ExplorerTask<?,?> task) {
+    public boolean addTask(ExplorerTask<?, ?> task) {
         boolean update = false;
         if (task != null && !tasks.contains(task)) {
             tasks.add(task);
@@ -48,7 +48,7 @@ public class LoadingPanel extends JPanel {
         return update;
     }
 
-    public boolean removeTask(ExplorerTask<?,?> task) {
+    public boolean removeTask(ExplorerTask<?, ?> task) {
         boolean update = false;
         if (task != null) {
             tasks.remove(task);

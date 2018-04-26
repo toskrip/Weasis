@@ -1,3 +1,13 @@
+/*******************************************************************************
+ * Copyright (c) 2009-2018 Weasis Team and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v2.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v20.html
+ *
+ * Contributors:
+ *     Nicolas Roduit - initial API and implementation
+ *******************************************************************************/
 package org.weasis.dicom.explorer;
 
 import java.text.Collator;
@@ -83,7 +93,7 @@ public class DicomSorter {
                     return -1;
                 }
             }
-            return Objects.equals(o1, o1) ? 0 : -1;
+            return Objects.equals(o1, o2) ? 0 : -1;
         }
     };
 
@@ -122,7 +132,7 @@ public class DicomSorter {
                     }
                 }
 
-                if (c == 0 || (val1 == null && val2 == null)) {   
+                if (c == 0 || (val1 == null && val2 == null)) {
                     LocalDateTime date1 = TagD.dateTime(Tag.SeriesDate, Tag.SeriesTime, st1);
                     LocalDateTime date2 = TagD.dateTime(Tag.SeriesDate, Tag.SeriesTime, st2);
                     if (date1 != null && date2 != null) {
@@ -227,7 +237,7 @@ public class DicomSorter {
             if (o2 instanceof MediaSeriesGroup) {
                 return -1;
             }
-            return Objects.equals(o1, o1) ? 0 : -1;
+            return Objects.equals(o1, o2) ? 0 : -1;
         }
     };
 

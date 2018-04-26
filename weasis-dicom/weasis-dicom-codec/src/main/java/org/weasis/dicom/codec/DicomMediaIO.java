@@ -1,9 +1,9 @@
 /*******************************************************************************
- * Copyright (c) 2016 Weasis Team and others.
+ * Copyright (c) 2009-2018 Weasis Team and others.
  * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
+ * are made available under the terms of the Eclipse Public License v2.0
  * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
+ * http://www.eclipse.org/legal/epl-v20.html
  *
  * Contributors:
  *     Nicolas Roduit - initial API and implementation
@@ -52,7 +52,6 @@ import javax.imageio.ImageTypeSpecifier;
 import javax.imageio.metadata.IIOMetadata;
 import javax.imageio.spi.ImageReaderSpi;
 import javax.imageio.stream.ImageInputStream;
-import javax.imageio.stream.ImageInputStreamImpl;
 import javax.media.jai.JAI;
 import javax.media.jai.PlanarImage;
 import javax.media.jai.operator.AndConstDescriptor;
@@ -67,13 +66,10 @@ import org.dcm4che3.data.VR;
 import org.dcm4che3.image.Overlays;
 import org.dcm4che3.image.PhotometricInterpretation;
 import org.dcm4che3.imageio.codec.ImageReaderFactory;
-import org.dcm4che3.imageio.codec.jpeg.PatchJPEGLS;
-import org.dcm4che3.imageio.codec.jpeg.PatchJPEGLSImageInputStream;
 import org.dcm4che3.imageio.plugins.dcm.DicomImageReadParam;
 import org.dcm4che3.imageio.plugins.dcm.DicomImageReaderSpi;
 import org.dcm4che3.imageio.plugins.dcm.DicomMetaData;
 import org.dcm4che3.imageio.stream.ImageInputStreamAdapter;
-import org.dcm4che3.imageio.stream.SegmentedInputImageStream;
 import org.dcm4che3.io.DicomInputStream;
 import org.dcm4che3.io.DicomInputStream.IncludeBulkData;
 import org.dcm4che3.io.DicomOutputStream;
@@ -107,9 +103,10 @@ import org.weasis.dicom.codec.geometry.ImageOrientation;
 import org.weasis.dicom.codec.utils.DicomImageUtils;
 import org.weasis.dicom.codec.utils.DicomMediaUtils;
 import org.weasis.dicom.codec.utils.OverlayUtils;
+import org.weasis.dicom.codec.utils.PatientComparator;
 
 import com.sun.media.imageio.stream.RawImageInputStream;
-import com.sun.media.imageioimpl.common.SignedDataImageParam;
+import com.sun.media.imageioimpl.common.ExtendImageParam;
 import com.sun.media.jai.util.ImageUtil;
 
 public class DicomMediaIO extends ImageReader implements DcmMediaReader {
@@ -294,7 +291,6 @@ public class DicomMediaIO extends ImageReader implements DcmMediaReader {
     private final VR.Holder pixeldataVR = new VR.Holder();
     private Fragments pixeldataFragments;
     private ImageReader decompressor;
-    private PatchJPEGLS patchJpegLS;
     private int frameLength;
     private PhotometricInterpretation pmi;
 
@@ -459,13 +455,14 @@ public class DicomMediaIO extends ImageReader implements DcmMediaReader {
                 TagD.getTagValue(this, Tag.SamplesPerPixel, Integer.class), banded);
         }
 
-        ImageReader reader = ImageIO.getImageReadersByFormatName("RAW").next(); //$NON-NLS-1$
+        Iterator<ImageReader> iter = ImageIO.getImageReadersByFormatName("RAW");//$NON-NLS-1$
+        ImageReader reader = iter.hasNext() ? iter.next() : null;
         if (reader == null) {
             throw new IllegalStateException("Cannot get RAW image reader"); //$NON-NLS-1$
         }
         RawImageInputStream riis =
             new RawImageInputStream(iis, new ImageTypeSpecifier(cmodel, smodel), frameOffsets, imageDimensions);
-        // endianess is already in iis?
+        // endianness is already in iis?
         // riis.setByteOrder(bigEndian ? ByteOrder.BIG_ENDIAN : ByteOrder.LITTLE_ENDIAN);
         reader.setInput(riis);
         return reader;
@@ -550,7 +547,8 @@ public class DicomMediaIO extends ImageReader implements DcmMediaReader {
         // -------- Mandatory Tags --------
         // Tags for identifying group (Patient, Study, Series)
         // Global Identifier for the patient.
-        setTag(TagW.PatientPseudoUID, DicomMediaUtils.buildPatientPseudoUID(this));
+        PatientComparator patientComparator = new PatientComparator(this);
+        setTag(TagW.PatientPseudoUID, patientComparator.buildPatientPseudoUID());
 
         Integer instNb =
             DicomMediaUtils.getIntegerFromDicomElement(header, Tag.InstanceNumber, instanceID.incrementAndGet());
@@ -1016,20 +1014,18 @@ public class DicomMediaIO extends ImageReader implements DcmMediaReader {
         return dis == null ? false : dis.getTransferSyntax().equals(UID.RLELossless);
     }
 
-    private ImageInputStreamImpl iisOfFrame(int frameIndex) throws IOException {
-        // Extract compressed file
+    private ExtendSegmentedInputImageStream iisOfFrame(int frameIndex) throws IOException {
+        // // Extract compressed file
         // if (!fileCache.isElementInMemory()) {
-        // String extension = "." + Optional.ofNullable(decompressor).map(d ->
-        // d.getOriginatingProvider().getFileSuffixes()[0]).orElse("raw");
-        // FileUtil.writeFile(buildSegmentedImageInputStream(frameIndex),
-        // new FileOutputStream(new File(AppProperties.FILE_CACHE_DIR,
-        // fileCache.getFinalFile().getName() + "-" + frameIndex + extension)));
+        // String extension = "." + Optional.ofNullable(decompressor)
+        // .map(d -> d.getOriginatingProvider().getFileSuffixes()[0]).orElse("raw");
+        // FileUtil.writeFile(buildSegmentedImageInputStream(frameIndex), new File(AppProperties.FILE_CACHE_DIR,
+        // fileCache.getFinalFile().getName() + "-" + frameIndex + extension));
         // }
-        org.dcm4che3.imageio.stream.SegmentedInputImageStream siis = buildSegmentedImageInputStream(frameIndex);
-        return patchJpegLS != null ? new PatchJPEGLSImageInputStream(siis, patchJpegLS) : siis;
+        return buildSegmentedImageInputStream(frameIndex);
     }
 
-    private SegmentedInputImageStream buildSegmentedImageInputStream(int frameIndex) throws IOException {
+    private ExtendSegmentedInputImageStream buildSegmentedImageInputStream(int frameIndex) throws IOException {
         int nbFragments = pixeldataFragments.size();
         long[] offsets;
         int[] length;
@@ -1085,7 +1081,7 @@ public class DicomMediaIO extends ImageReader implements DcmMediaReader {
             }
         }
 
-        return new org.dcm4che3.imageio.stream.SegmentedInputImageStream(iis, offsets, length);
+        return new ExtendSegmentedInputImageStream(iis, fileCache.getOriginalFile().orElse(null), offsets, length);
     }
 
     @Override
@@ -1101,14 +1097,15 @@ public class DicomMediaIO extends ImageReader implements DcmMediaReader {
             checkIndex(frameIndex);
 
             if (decompressor != null) {
-                decompressor.setInput(iisOfFrame(frameIndex));
+                ExtendSegmentedInputImageStream siis = iisOfFrame(frameIndex);
+                decompressor.setInput(siis);
 
                 if (LOGGER.isDebugEnabled()) {
                     LOGGER.debug("Start decompressing frame #" + (frameIndex + 1)); //$NON-NLS-1$
                 }
                 Raster wr = pmi.decompress() == pmi && decompressor.canReadRaster()
-                    ? decompressor.readRaster(0, decompressParam(param))
-                    : decompressor.read(0, decompressParam(param)).getRaster();
+                    ? decompressor.readRaster(0, decompressParam(param, siis))
+                    : decompressor.read(0, decompressParam(param, siis)).getRaster();
                 if (LOGGER.isDebugEnabled()) {
                     LOGGER.debug("Finished decompressing frame #" + (frameIndex + 1)); //$NON-NLS-1$
                 }
@@ -1132,7 +1129,7 @@ public class DicomMediaIO extends ImageReader implements DcmMediaReader {
         }
     }
 
-    private ImageReadParam decompressParam(ImageReadParam param) {
+    private ImageReadParam decompressParam(ImageReadParam param, ExtendSegmentedInputImageStream siis) {
         ImageReadParam decompressParam = decompressor.getDefaultReadParam();
         ImageTypeSpecifier imageType = param.getDestinationType();
         BufferedImage dest = param.getDestination();
@@ -1141,8 +1138,15 @@ public class DicomMediaIO extends ImageReader implements DcmMediaReader {
         }
         decompressParam.setDestinationType(imageType);
         decompressParam.setDestination(dest);
-        if (decompressParam instanceof SignedDataImageParam) {
-            ((SignedDataImageParam) decompressParam).setSignedData(dataType == DataBuffer.TYPE_SHORT);
+        if (decompressParam instanceof ExtendImageParam) {
+            ExtendImageParam p = (ExtendImageParam) decompressParam;
+            p.setSignedData(dataType == DataBuffer.TYPE_SHORT);
+            p.setYbrColorModel(pmi.name());
+            if (siis != null) {
+                p.setSegmentPositions(siis.getSegmentPositions());
+                p.setSegmentLengths(siis.getSegmentLengths());
+                p.setFile(siis.getFile());
+            }
         }
         return decompressParam;
     }
@@ -1158,11 +1162,12 @@ public class DicomMediaIO extends ImageReader implements DcmMediaReader {
 
             WritableRaster raster;
             if (decompressor != null) {
-                decompressor.setInput(iisOfFrame(frameIndex));
+                ExtendSegmentedInputImageStream siis = iisOfFrame(frameIndex);
+                decompressor.setInput(siis);
                 if (LOGGER.isDebugEnabled()) {
                     LOGGER.debug("Start decompressing frame #" + (frameIndex + 1)); //$NON-NLS-1$
                 }
-                BufferedImage bi = decompressor.read(0, decompressParam(param));
+                BufferedImage bi = decompressor.read(0, decompressParam(param, siis));
                 if (LOGGER.isDebugEnabled()) {
                     LOGGER.debug("Finished decompressing frame #" + (frameIndex + 1)); //$NON-NLS-1$
                 }
@@ -1190,11 +1195,12 @@ public class DicomMediaIO extends ImageReader implements DcmMediaReader {
 
             RenderedImage bi;
             if (decompressor != null) {
-                decompressor.setInput(iisOfFrame(frameIndex));
+                ExtendSegmentedInputImageStream siis = iisOfFrame(frameIndex);
+                decompressor.setInput(siis);
                 if (isRLELossless() && (pmi.isSubSambled() || pmi.name().startsWith("YBR"))) { //$NON-NLS-1$
                     bi = convertSubSambledAndYBR(frameIndex, param);
                 } else {
-                    bi = decompressor.readAsRenderedImage(0, decompressParam(param));
+                    bi = decompressor.readAsRenderedImage(0, decompressParam(param, siis));
                 }
             } else {
                 // Rewrite image with subsampled model (otherwise cannot not be displayed as RenderedImage)
@@ -1338,7 +1344,6 @@ public class DicomMediaIO extends ImageReader implements DcmMediaReader {
             decompressor.dispose();
             decompressor = null;
         }
-        patchJpegLS = null;
     }
 
     private void checkIndex(int frameIndex) {

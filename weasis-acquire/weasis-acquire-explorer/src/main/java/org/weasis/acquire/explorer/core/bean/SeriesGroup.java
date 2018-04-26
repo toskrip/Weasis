@@ -1,9 +1,9 @@
 /*******************************************************************************
- * Copyright (c) 2016 Weasis Team and others.
+ * Copyright (c) 2009-2018 Weasis Team and others.
  * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
+ * are made available under the terms of the Eclipse Public License v2.0
  * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
+ * http://www.eclipse.org/legal/epl-v20.html
  *
  * Contributors:
  *     Nicolas Roduit - initial API and implementation
@@ -23,10 +23,10 @@ import org.weasis.acquire.explorer.Messages;
 import org.weasis.acquire.explorer.gui.central.SeriesDataListener;
 import org.weasis.core.api.media.data.TagUtil;
 import org.weasis.core.api.media.data.TagW;
+import org.weasis.core.api.util.StringUtil;
 import org.weasis.dicom.codec.TagD;
-import org.weasis.dicom.util.StringUtil;
 
-public class SeriesGroup extends AbstractTagable implements Comparable<SeriesGroup> {
+public class SeriesGroup extends DefaultTagable implements Comparable<SeriesGroup> {
     public enum Type {
         NONE, DATE, NAME;
     }
@@ -35,6 +35,7 @@ public class SeriesGroup extends AbstractTagable implements Comparable<SeriesGro
     private String name;
     private LocalDateTime date;
     private final List<SeriesDataListener> listenerList = new ArrayList<>();
+    private boolean needUpateFromGlobaTags = false;
 
     public static final SeriesGroup DATE_SERIE = new SeriesGroup(LocalDateTime.now());
 
@@ -56,23 +57,35 @@ public class SeriesGroup extends AbstractTagable implements Comparable<SeriesGro
     }
 
     public SeriesGroup(LocalDateTime date) {
-        Objects.requireNonNull(date);
         this.type = Type.DATE;
-        this.date = date;
+        this.date = Objects.requireNonNull(date);
         init();
     }
 
     private void init() {
-        // Default Modality if not overridden
-        tags.put(TagD.get(Tag.Modality), "XC"); //$NON-NLS-1$
         tags.put(TagD.get(Tag.SeriesInstanceUID), UIDUtils.createUID());
         tags.put(TagD.get(Tag.SeriesDescription), getDisplayName());
         updateDicomTags();
     }
 
+    public boolean isNeedUpateFromGlobaTags() {
+        return needUpateFromGlobaTags;
+    }
+
+    public void setNeedUpateFromGlobaTags(boolean needUpateFromGlobaTags) {
+        this.needUpateFromGlobaTags = needUpateFromGlobaTags;
+    }
+
+    private void setIfnotInGlobal(TagW tag, Object value) {
+        Object globalValue = AcquireManager.GLOBAL.getTagValue(tag);
+        tags.put(tag, globalValue == null ? value : globalValue);
+    }
+
     public void updateDicomTags() {
-        TagW operator = TagD.get(Tag.OperatorsName);
-        tags.put(operator, AcquireManager.GLOBAL.getTagValue(operator));
+        // Modality from worklist otherwise XC
+        setIfnotInGlobal(TagD.get(Tag.Modality), "XC"); //$NON-NLS-1$
+        setIfnotInGlobal(TagD.get(Tag.OperatorsName), null);
+        setIfnotInGlobal(TagD.get(Tag.ReferringPhysicianName), null);
     }
 
     public Type getType() {

@@ -1,19 +1,16 @@
-/*
- * Licensed to the Apache Software Foundation (ASF) under one or more contributor license agreements. See the NOTICE
- * file distributed with this work for additional information regarding copyright ownership. The ASF licenses this file
- * to you under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with the
- * License. You may obtain a copy of the License at
+/*******************************************************************************
+ * Copyright (c) 2009-2018 Weasis Team and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v2.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v20.html
  *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
- * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
- * specific language governing permissions and limitations under the License.
- */
+ * Contributors:
+ *     Nicolas Roduit - initial API and implementation
+ *******************************************************************************/
 package org.weasis.launcher;
 
 import java.io.File;
-import java.io.InputStream;
 import java.io.PipedInputStream;
 import java.io.PipedOutputStream;
 import java.net.URI;
@@ -104,7 +101,8 @@ public class AutoProcessor {
      * Processes bundles in the auto-deploy directory, performing the specified deploy actions.
      * </p>
      */
-    private static void processAutoDeploy(Map<String, String> configMap, BundleContext context, WeasisLoader weasisLoader) {
+    private static void processAutoDeploy(Map<String, String> configMap, BundleContext context,
+        WeasisLoader weasisLoader) {
         // Determine if auto deploy actions to perform.
         String action = configMap.get(AUTO_DEPLOY_ACTION_PROPERTY);
         action = (action == null) ? "" : action; //$NON-NLS-1$
@@ -194,13 +192,18 @@ public class AutoProcessor {
                 } catch (Exception ex) {
                     System.err.println("Auto-deploy install: " + ex //$NON-NLS-1$
                         + ((ex.getCause() != null) ? " - " + ex.getCause() : "")); //$NON-NLS-1$ //$NON-NLS-2$
+                    if (!Constants.FRAMEWORK_STORAGE_CLEAN_ONFIRSTINIT
+                        .equals(configMap.get(Constants.FRAMEWORK_STORAGE_CLEAN))) {
+                        // Reset all the old cache
+                        throw new IllegalStateException("A bundle cannot be started"); //$NON-NLS-1$
+                    }
                 }
             }
 
             // Uninstall all bundles not in the auto-deploy directory if
             // the 'uninstall' action is present.
             if (actionList.contains(AUTO_DEPLOY_UNINSTALL_VALUE)) {
-                for ( Iterator<Entry<String, Bundle>> it = installedBundleMap.entrySet().iterator(); it.hasNext();) {
+                for (Iterator<Entry<String, Bundle>> it = installedBundleMap.entrySet().iterator(); it.hasNext();) {
                     Entry<String, Bundle> entry = it.next();
                     Bundle b = entry.getValue();
                     if (b.getBundleId() != 0) {
@@ -233,7 +236,8 @@ public class AutoProcessor {
      * Processes the auto-install and auto-start properties from the specified configuration properties.
      * </p>
      */
-    private static void processAutoProperties(Map<String, String> configMap, BundleContext context, WeasisLoader weasisLoader) {
+    private static void processAutoProperties(Map<String, String> configMap, BundleContext context,
+        WeasisLoader weasisLoader) {
         // Retrieve the Start Level service, since it will be needed
         // to set the start level of the installed bundles.
         StartLevel sl = (StartLevel) context
@@ -340,6 +344,11 @@ public class AutoProcessor {
                     if (ex.getCause() != null) {
                         ex.printStackTrace();
                     }
+                    if (!Constants.FRAMEWORK_STORAGE_CLEAN_ONFIRSTINIT
+                        .equals(configMap.get(Constants.FRAMEWORK_STORAGE_CLEAN))) {
+                        // Reset all the old cache
+                        throw new IllegalStateException("A bundle cannot be started"); //$NON-NLS-1$
+                    }
                 }
             } finally {
                 bundleIter++;
@@ -405,7 +414,8 @@ public class AutoProcessor {
                         try {
                             Bundle b2 = installedBundleMap.get(bundleName);
                             if (b2 == null) {
-                                b2 = context.installBundle(uri, FileUtil.getAdaptedConnection(new URI(uri).toURL()).getInputStream());
+                                b2 = context.installBundle(uri,
+                                    FileUtil.getAdaptedConnection(new URI(uri).toURL()).getInputStream());
                                 installedBundleMap.put(bundleName, b);
                             }
                             if (b2 != null && !value.equals(b2.getVersion().getQualifier())) {
@@ -415,7 +425,8 @@ public class AutoProcessor {
                                     // Handle same bundle version with different location
                                     try {
                                         b2.uninstall();
-                                        context.installBundle(uri, FileUtil.getAdaptedConnection(new URI(uri).toURL()).getInputStream());
+                                        context.installBundle(uri,
+                                            FileUtil.getAdaptedConnection(new URI(uri).toURL()).getInputStream());
                                         installedBundleMap.put(bundleName, b);
                                     } catch (Exception exc) {
                                         System.err.println("Cannot install translation pack: " + uri); //$NON-NLS-1$
@@ -492,29 +503,27 @@ public class AutoProcessor {
         }
 
         if (pack) {
-
             final URL url = new URL(location + PACK200_COMPRESSION);
             final PipedInputStream in = new PipedInputStream();
             final PipedOutputStream out = new PipedOutputStream(in);
-            new Thread(() -> {
-                JarOutputStream jarStream = null;
-                try {
-                    InputStream is = FileUtil.getAdaptedConnection(url).getInputStream();
+            Thread t = new Thread(() -> {
+                try (JarOutputStream jarStream = new JarOutputStream(out);
+                                GZIPInputStream gzStream =
+                                    new GZIPInputStream(FileUtil.getAdaptedConnection(url).getInputStream());) {
                     Unpacker unpacker = Pack200.newUnpacker();
-                    jarStream = new JarOutputStream(out);
-                    unpacker.unpack(new GZIPInputStream(is), jarStream);
+                    unpacker.unpack(gzStream, jarStream);
                 } catch (Exception e1) {
                     System.err.println("Cannot install pack bundle: " + url); //$NON-NLS-1$
                     e1.printStackTrace();
-                } finally {
-                    FileUtil.safeClose(jarStream);
                 }
-            }).start();
+            });
+            t.start();
 
             return context.installBundle(location, in);
 
         }
-        return context.installBundle(location, FileUtil.getAdaptedConnection(new URI(location).toURL()).getInputStream());
+        return context.installBundle(location,
+            FileUtil.getAdaptedConnection(new URI(location).toURL()).getInputStream());
     }
 
     static class BundleElement {

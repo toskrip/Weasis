@@ -1,12 +1,12 @@
 /*******************************************************************************
- * Copyright (c) 2016 Weasis Team and others.
+ * Copyright (c) 2009-2018 Weasis Team and others.
  * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
+ * are made available under the terms of the Eclipse Public License v2.0
  * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
+ * http://www.eclipse.org/legal/epl-v20.html
  *
  * Contributors:
- *     ${user} - initial API and implementation
+ *     Nicolas Roduit - initial API and implementation
  *******************************************************************************/
 package org.weasis.core.api.media.data;
 
@@ -58,7 +58,7 @@ public class TagWTest {
         }
 
         tag = new TagW(ID_1, KEYWORD_1, DISPLAY_NAME_1, TagType.STRING, VM_MIN_1, VM_MAX_1, null);
-        assertThat(tag).isNotNull().hashCode();
+        assertThat(tag).isNotNull();
         assertThat(tag.getId()).isEqualTo(ID_1);
         assertThat(tag.getKeyword()).isEqualTo(KEYWORD_1);
         assertThat(tag.getDisplayedName()).isEqualTo(tag.toString()).isEqualTo(DISPLAY_NAME_1);
@@ -67,7 +67,7 @@ public class TagWTest {
         assertThat(tag.vmMin).isEqualTo(VM_MIN_1);
 
         tag = new TagW(ID_1, KEYWORD_1, DISPLAY_NAME_1, null, VM_MIN_2, VM_MAX_2, null);
-        assertThat(tag).isNotNull().hashCode();
+        assertThat(tag).isNotNull();
         assertThat(tag.getId()).isEqualTo(ID_1);
         assertThat(tag.getKeyword()).isEqualTo(KEYWORD_1);
         assertThat(tag.getDisplayedName()).isEqualTo(tag.toString()).isEqualTo(DISPLAY_NAME_1);

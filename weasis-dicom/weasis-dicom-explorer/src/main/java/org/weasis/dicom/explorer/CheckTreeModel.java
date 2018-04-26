@@ -1,9 +1,9 @@
 /*******************************************************************************
- * Copyright (c) 2016 Weasis Team and others.
+ * Copyright (c) 2009-2018 Weasis Team and others.
  * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
+ * are made available under the terms of the Eclipse Public License v2.0
  * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
+ * http://www.eclipse.org/legal/epl-v20.html
  *
  * Contributors:
  *     Nicolas Roduit - initial API and implementation
@@ -27,7 +27,6 @@ import org.dcm4che3.data.Tag;
 import org.dcm4che3.util.UIDUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.weasis.core.api.gui.util.JMVUtils;
 import org.weasis.core.api.media.data.MediaElement;
 import org.weasis.core.api.media.data.MediaSeries;
 import org.weasis.core.api.media.data.MediaSeriesGroup;
@@ -37,7 +36,8 @@ import org.weasis.core.api.media.data.TagReadable;
 import org.weasis.core.api.media.data.TagUtil;
 import org.weasis.core.api.media.data.TagW;
 import org.weasis.core.api.media.data.TagW.TagType;
-import org.weasis.core.api.media.data.Thumbnail;
+import org.weasis.core.api.media.data.Thumbnailable;
+import org.weasis.core.api.util.LangUtil;
 import org.weasis.core.ui.model.GraphicModel;
 import org.weasis.dicom.codec.DicomSeries;
 import org.weasis.dicom.codec.DicomSpecialElement;
@@ -99,7 +99,7 @@ public class CheckTreeModel {
                     public String toString() {
                         DicomSpecialElement d = (DicomSpecialElement) getUserObject();
                         StringBuilder buf = new StringBuilder();
-                        boolean newElement = JMVUtils.getNULLtoFalse(d.getTagValue(TagW.ObjectToSave));
+                        boolean newElement = LangUtil.getNULLtoFalse((Boolean) d.getTagValue(TagW.ObjectToSave));
                         if (newElement) {
                             buf.append("<html>"); //$NON-NLS-1$
                             buf.append("<font color='orange'><b>NEW </b></font>"); //$NON-NLS-1$
@@ -160,8 +160,6 @@ public class CheckTreeModel {
             DefaultMutableTreeNode prVirtualNode = new ToolTipTreeNode(prSeries, false);
             studyNode.insert(prVirtualNode, index + 1);
         }
-
-        return;
     }
 
     public static DefaultTreeModel buildModel(DicomModel dicomModel) {
@@ -206,7 +204,7 @@ public class CheckTreeModel {
 
         public String getToolTipText() {
             TagReadable s = (TagReadable) getUserObject();
-            Thumbnail thumb = (Thumbnail) s.getTagValue(TagW.Thumbnail);
+            Thumbnailable thumb = (Thumbnailable) s.getTagValue(TagW.Thumbnail);
             if (thumb != null) {
                 try {
                     File path = thumb.getThumbnailPath();
@@ -237,7 +235,7 @@ public class CheckTreeModel {
         public String toString() {
             MediaSeries<?> s = (MediaSeries<?>) getUserObject();
             StringBuilder buf = new StringBuilder();
-            boolean newElement = JMVUtils.getNULLtoFalse(s.getTagValue(TagW.ObjectToSave));
+            boolean newElement = LangUtil.getNULLtoFalse((Boolean) s.getTagValue(TagW.ObjectToSave));
             if (newElement) {
                 buf.append("<html>"); //$NON-NLS-1$
                 buf.append("<font color='orange'><b>NEW </b></font>"); //$NON-NLS-1$
@@ -257,6 +255,7 @@ public class CheckTreeModel {
             if (desc != null) {
                 buf.append(desc);
             }
+            buf.append(" -- (").append(getChildCount()).append(" instances)"); //$NON-NLS-1$ //$NON-NLS-2$
             if (newElement) {
                 buf.append("</html>"); //$NON-NLS-1$
             }

@@ -1,9 +1,9 @@
 /*******************************************************************************
- * Copyright (c) 2016 Weasis Team and others.
+ * Copyright (c) 2009-2018 Weasis Team and others.
  * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
+ * are made available under the terms of the Eclipse Public License v2.0
  * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
+ * http://www.eclipse.org/legal/epl-v20.html
  *
  * Contributors:
  *     Nicolas Roduit - initial API and implementation
@@ -30,7 +30,6 @@ import javax.media.jai.TiledImage;
 import org.dcm4che3.data.Attributes;
 import org.dcm4che3.data.Tag;
 import org.weasis.core.api.gui.util.ActionW;
-import org.weasis.core.api.gui.util.JMVUtils;
 import org.weasis.core.api.image.AbstractOp;
 import org.weasis.core.api.image.ImageOpEvent;
 import org.weasis.core.api.image.ImageOpEvent.OpEvent;
@@ -39,9 +38,9 @@ import org.weasis.core.api.image.op.ShutterDescriptor;
 import org.weasis.core.api.image.util.ImageFiler;
 import org.weasis.core.api.media.data.ImageElement;
 import org.weasis.core.api.media.data.TagW;
+import org.weasis.core.api.util.LangUtil;
 import org.weasis.dicom.codec.DicomMediaIO;
 import org.weasis.dicom.codec.PRSpecialElement;
-import org.weasis.dicom.codec.PresentationStateReader;
 import org.weasis.dicom.codec.TagD;
 import org.weasis.dicom.codec.utils.DicomMediaUtils;
 import org.weasis.dicom.codec.utils.OverlayUtils;
@@ -116,11 +115,11 @@ public class ShutterOp extends AbstractOp {
         RenderedImage source = (RenderedImage) params.get(Param.INPUT_IMG);
         RenderedImage result = source;
 
-        Boolean shutter = (Boolean) params.get(P_SHOW);
+        boolean shutter = LangUtil.getNULLtoFalse((Boolean) params.get(P_SHOW));
         Area area = (Area) params.get(P_SHAPE);
         Object pr = params.get(P_PR_ELEMENT);
 
-        if (shutter != null && shutter && area != null) {
+        if (shutter && area != null) {
             Byte[] color = getShutterColor();
             if (isBlack(color)) {
                 result = ShutterDescriptor.create(source, new ROIShape(area), getShutterColor(), null);
@@ -135,7 +134,7 @@ public class ShutterOp extends AbstractOp {
             DicomMediaIO prReader = ((PRSpecialElement) pr).getMediaReader();
             RenderedImage imgOverlay = null;
             ImageElement image = (ImageElement) params.get(P_IMAGE_ELEMENT);
-            boolean overlays = JMVUtils.getNULLtoFalse(prReader.getTagValue(TagW.HasOverlay));
+            boolean overlays = LangUtil.getNULLtoFalse((Boolean) prReader.getTagValue(TagW.HasOverlay));
 
             if (overlays && image != null && image.getKey() instanceof Integer) {
                 int frame = (Integer) image.getKey();

@@ -1,9 +1,9 @@
 /*******************************************************************************
- * Copyright (c) 2016 Weasis Team and others.
+ * Copyright (c) 2009-2018 Weasis Team and others.
  * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
+ * are made available under the terms of the Eclipse Public License v2.0
  * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
+ * http://www.eclipse.org/legal/epl-v20.html
  *
  * Contributors:
  *     Nicolas Roduit - initial API and implementation
@@ -187,7 +187,7 @@ public class DicomNodeDialog extends JDialog {
             gbcComboBox.gridy = 3;
             content.add(comboBox, gbcComboBox);
             this.getContentPane().add(content, BorderLayout.CENTER);
-            
+
             if (typeNode == AbstractDicomNode.Type.DICOM_CALLING) {
                 portTf.setValue(11113);
                 hostnameTf.setText("localhost"); //$NON-NLS-1$
@@ -232,7 +232,7 @@ public class DicomNodeDialog extends JDialog {
             return;
         }
 
-        UsageType usageType =  Optional.ofNullable(comboBox).map(c -> (UsageType) c.getSelectedItem()).orElse(null);
+        UsageType usageType = Optional.ofNullable(comboBox).map(c -> (UsageType) c.getSelectedItem()).orElse(null);
         boolean addNode = dicomNode == null;
         if (addNode) {
             if (AbstractDicomNode.Type.PRINTER == typeNode) {

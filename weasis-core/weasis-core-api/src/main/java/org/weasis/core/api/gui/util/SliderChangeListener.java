@@ -1,18 +1,20 @@
 /*******************************************************************************
- * Copyright (c) 2016 Weasis Team and others.
+ * Copyright (c) 2009-2018 Weasis Team and others.
  * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
+ * are made available under the terms of the Eclipse Public License v2.0
  * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
+ * http://www.eclipse.org/legal/epl-v20.html
  *
  * Contributors:
  *     Nicolas Roduit - initial API and implementation
  *******************************************************************************/
 package org.weasis.core.api.gui.util;
 
+import java.awt.Font;
 import java.awt.event.InputEvent;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseWheelEvent;
+import java.util.Enumeration;
 import java.util.Hashtable;
 
 import javax.swing.BoundedRangeModel;
@@ -20,6 +22,7 @@ import javax.swing.BoxLayout;
 import javax.swing.DefaultBoundedRangeModel;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JSlider;
 import javax.swing.border.TitledBorder;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
@@ -96,6 +99,10 @@ public abstract class SliderChangeListener extends MouseActionAdapter implements
     }
 
     public void setRealMinMaxValue(double min, double max, double value, boolean triggerChangedEvent) {
+        // Avoid to get infinity value and lock the slider
+        if (max - min == 0) {
+            max += 1;
+        }
         realMin = min;
         realMax = max;
         minMaxValueAction(toSliderValue(min), toSliderValue(max), toSliderValue(value), triggerChangedEvent);
@@ -271,7 +278,7 @@ public abstract class SliderChangeListener extends MouseActionAdapter implements
         });
 
         slider.setLabelTable(table);
-        FontTools.setFont10(slider);
+        SliderChangeListener.setFont(slider, FontTools.getFont10());
         slider.setMajorTickSpacing(spacing);
     }
 
@@ -393,4 +400,15 @@ public abstract class SliderChangeListener extends MouseActionAdapter implements
         }
         return (sliderValue * (modelMax - modelMin)) / sliderMax + modelMin;
     }
+
+    public static void setFont(JSlider jslider, Font font) {
+        Enumeration<?> enumVal = jslider.getLabelTable().elements();
+        while (enumVal.hasMoreElements()) {
+            Object el = enumVal.nextElement();
+            if (el instanceof JLabel) {
+                ((JLabel) el).setFont(font);
+            }
+        }
+    }
+
 }

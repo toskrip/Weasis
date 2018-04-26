@@ -1,9 +1,9 @@
 /*******************************************************************************
- * Copyright (c) 2016 Weasis Team and others.
+ * Copyright (c) 2009-2018 Weasis Team and others.
  * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
+ * are made available under the terms of the Eclipse Public License v2.0
  * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
+ * http://www.eclipse.org/legal/epl-v20.html
  *
  * Contributors:
  *     Nicolas Roduit - initial API and implementation
@@ -17,6 +17,7 @@ import javax.swing.LookAndFeel;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.FrameworkUtil;
+import org.osgi.framework.ServiceReference;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.weasis.core.api.util.FileUtil;
@@ -95,10 +96,15 @@ public class AppProperties {
 
     }
 
-    public static BundleContext getBundleContext(Class<?> clazz) {
-        if (clazz != null) {
-            Bundle bundle = FrameworkUtil.getBundle(clazz);
-            return bundle == null ? null : bundle.getBundleContext();
+    public static BundleContext getBundleContext() {
+        Bundle bundle = FrameworkUtil.getBundle(AppProperties.class);
+        return bundle == null ? null : bundle.getBundleContext();
+    }
+
+    public static BundleContext getBundleContext(ServiceReference<?> sRef) {
+        if (sRef != null) {
+            Bundle bundle = sRef.getBundle();
+            return bundle == null ? getBundleContext() : bundle.getBundleContext();
         }
         return null;
     }

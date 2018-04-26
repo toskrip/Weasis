@@ -1,9 +1,9 @@
 /*******************************************************************************
- * Copyright (c) 2016 Weasis Team and others.
+ * Copyright (c) 2009-2018 Weasis Team and others.
  * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
+ * are made available under the terms of the Eclipse Public License v2.0
  * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
+ * http://www.eclipse.org/legal/epl-v20.html
  *
  * Contributors:
  *     Nicolas Roduit - initial API and implementation
@@ -77,10 +77,18 @@ public class JMVUtils {
         super();
     }
 
+    /**
+     * @deprecated use LangUtil instead
+     */
+    @Deprecated
     public static boolean getNULLtoFalse(Object val) {
         return Boolean.TRUE.equals(val);
     }
 
+    /**
+     * @deprecated use LangUtil instead
+     */
+    @Deprecated
     public static boolean getNULLtoTrue(Object val) {
         if (val instanceof Boolean) {
             return ((Boolean) val).booleanValue();
@@ -117,7 +125,7 @@ public class JMVUtils {
         return nbTiles;
     }
 
-    public static void setPreferredWidth(JComponent component, int width, int minWidth) {
+    public static void setPreferredWidth(Component component, int width, int minWidth) {
         Dimension dim = component.getPreferredSize();
         dim.width = width;
         component.setPreferredSize(dim);
@@ -126,11 +134,11 @@ public class JMVUtils {
         component.setMinimumSize(dim);
     }
 
-    public static void setPreferredWidth(JComponent component, int width) {
+    public static void setPreferredWidth(Component component, int width) {
         setPreferredWidth(component, width, 50);
     }
 
-    public static void setPreferredHeight(JComponent component, int height) {
+    public static void setPreferredHeight(Component component, int height) {
         Dimension dim = component.getPreferredSize();
         dim.height = height;
         component.setPreferredSize(dim);
@@ -163,19 +171,19 @@ public class JMVUtils {
         }
     }
 
-    public static void formatTableHeaders(JTable table, int alignement) {
+    public static void formatTableHeaders(JTable table, int alignment) {
         TableHeaderRenderer renderer = new TableHeaderRenderer();
-        renderer.setHorizontalAlignment(alignement);
+        renderer.setHorizontalAlignment(alignment);
         for (int i = 0; i < table.getColumnCount(); i++) {
             TableColumn col = table.getColumnModel().getColumn(i);
             col.setHeaderRenderer(renderer);
         }
     }
 
-    public static void formatTableHeaders(JTable table, int alignement, int columnSize) {
+    public static void formatTableHeaders(JTable table, int alignment, int columnSize) {
         TableHeaderRenderer renderer = new TableHeaderRenderer();
 
-        renderer.setHorizontalAlignment(alignement);
+        renderer.setHorizontalAlignment(alignment);
         for (int i = 0; i < table.getColumnCount(); i++) {
             TableColumn col = table.getColumnModel().getColumn(i);
             col.setHeaderRenderer(renderer);
@@ -302,7 +310,7 @@ public class JMVUtils {
             return new Dimension(30, 30);
         }
     }
-    
+
     public static HTMLEditorKit buildHTMLEditorKit(JComponent component) {
         Objects.requireNonNull(component);
         HTMLEditorKit kit = new HTMLEditorKit();
@@ -313,10 +321,10 @@ public class JMVUtils {
             + ";margin:3;font-weight:normal;}"); //$NON-NLS-1$
         return kit;
     }
-    
+
     public static void addStylesToHTML(StyledDocument doc) {
         // Initialize some styles.
-        Style regular = doc.getStyle("default"); //$NON-NLS-1$;
+        Style regular = doc.getStyle("default"); //$NON-NLS-1$
         Style s = doc.addStyle("title", regular); //$NON-NLS-1$
         StyleConstants.setFontSize(s, 16);
         StyleConstants.setBold(s, true);

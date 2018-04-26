@@ -1,9 +1,9 @@
 /*******************************************************************************
- * Copyright (c) 2016 Weasis Team and others.
+ * Copyright (c) 2009-2018 Weasis Team and others.
  * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
+ * are made available under the terms of the Eclipse Public License v2.0
  * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
+ * http://www.eclipse.org/legal/epl-v20.html
  *
  * Contributors:
  *     Nicolas Roduit - initial API and implementation
@@ -138,7 +138,7 @@ public abstract class ViewerPlugin<E extends MediaElement> extends JPanel implem
         UIManager.DOCKING_CONTROL.getController()
             .setFocusedDockable(new DefaultFocusRequest(dockable.intern(), this, false, true, false));
     }
-    
+
     public void handleFocusAfterClosing() {
         int size = UIManager.VIEWER_PLUGINS.size();
         if (size > 0) {
@@ -147,8 +147,8 @@ public abstract class ViewerPlugin<E extends MediaElement> extends JPanel implem
                 lp.dockable.toFront();
             }
         } else {
-            ViewerPluginBuilder.DefaultDataModel.firePropertyChange(new ObservableEvent(
-                ObservableEvent.BasicAction.NULL_SELECTION, ViewerPlugin.this, null, null));
+            ViewerPluginBuilder.DefaultDataModel.firePropertyChange(
+                new ObservableEvent(ObservableEvent.BasicAction.NULL_SELECTION, ViewerPlugin.this, null, null));
         }
     }
 
@@ -177,8 +177,7 @@ public abstract class ViewerPlugin<E extends MediaElement> extends JPanel implem
                 dockable.add(getComponent());
                 dockable.setFocusComponent(ViewerPlugin.this);
                 UIManager.MAIN_AREA.add(getDockable());
-                dockable.setDefaultLocation(ExtendedMode.NORMALIZED,
-                    CLocation.working(UIManager.MAIN_AREA).stack());
+                dockable.setDefaultLocation(ExtendedMode.NORMALIZED, CLocation.working(UIManager.MAIN_AREA).stack());
                 dockable.setVisible(true);
             }
         });

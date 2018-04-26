@@ -1,3 +1,13 @@
+/*******************************************************************************
+ * Copyright (c) 2009-2018 Weasis Team and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v2.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v20.html
+ *
+ * Contributors:
+ *     Nicolas Roduit - initial API and implementation
+ *******************************************************************************/
 package org.weasis.dicom.qr;
 
 import java.io.ByteArrayInputStream;
@@ -6,6 +16,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
@@ -22,7 +33,6 @@ import org.weasis.core.api.gui.util.GuiExecutor;
 import org.weasis.core.api.util.FileUtil;
 import org.weasis.core.api.util.ResourceUtil;
 import org.weasis.core.api.util.StringUtil;
-import org.weasis.dicom.codec.wado.WadoParameters;
 import org.weasis.dicom.explorer.DicomModel;
 import org.weasis.dicom.explorer.ExplorerTask;
 import org.weasis.dicom.explorer.LoadLocalDicom;
@@ -31,6 +41,8 @@ import org.weasis.dicom.explorer.pref.node.AbstractDicomNode.RetrieveType;
 import org.weasis.dicom.explorer.pref.node.DefaultDicomNode;
 import org.weasis.dicom.explorer.pref.node.DicomWebNode;
 import org.weasis.dicom.explorer.wado.LoadRemoteDicomManifest;
+import org.weasis.dicom.mf.ArcQuery;
+import org.weasis.dicom.mf.WadoParameters;
 import org.weasis.dicom.op.CGet;
 import org.weasis.dicom.op.CMove;
 import org.weasis.dicom.param.AdvancedParams;
@@ -38,7 +50,8 @@ import org.weasis.dicom.param.ConnectOptions;
 import org.weasis.dicom.param.DicomParam;
 import org.weasis.dicom.param.DicomProgress;
 import org.weasis.dicom.param.DicomState;
-import org.weasis.dicom.qr.manisfest.ManifestBuilder;
+import org.weasis.dicom.param.ListenerParams;
+import org.weasis.dicom.qr.manisfest.CFindQueryResult;
 import org.weasis.dicom.tool.DicomListener;
 
 public class RetrieveTask extends ExplorerTask<ExplorerTask<Boolean, String>, String> {
@@ -91,6 +104,7 @@ public class RetrieveTask extends ExplorerTask<ExplorerTask<Boolean, String>, St
                 connectOptions.setConnectTimeout(3000);
                 connectOptions.setAcceptTimeout(5000);
                 params.setConnectOptions(connectOptions);
+
                 if (RetrieveType.CGET == type) {
                     File sopClass = ResourceUtil.getResource("store-tcs.properties"); //$NON-NLS-1$
                     URL url = null;
@@ -109,15 +123,17 @@ public class RetrieveTask extends ExplorerTask<ExplorerTask<Boolean, String>, St
                         if (dicomListener == null) {
                             errorMessage = Messages.getString("RetrieveTask.msg_start_listener"); //$NON-NLS-1$
                         } else {
-                            dicomListener.setParams(params);
                             if (dicomListener.isRunning()) {
                                 errorMessage = Messages.getString("RetrieveTask.msg_running_listener"); //$NON-NLS-1$
                             } else {
-                                dicomListener.start(callingNode.getDicomNode());
+                                ListenerParams lparams = new ListenerParams(params, true);
+                                dicomListener.start(callingNode.getDicomNode(), lparams);
                             }
                         }
                     } catch (Exception e) {
-                        dicomListener.stop();
+                        if (dicomListener != null) {
+                            dicomListener.stop();
+                        }
                         String msg = Messages.getString("RetrieveTask.msg_start_listener"); //$NON-NLS-1$
                         errorMessage = String.format("%s: %s.", msg, e.getMessage()); //$NON-NLS-1$
                         LOGGER.error("Start DICOM listener", e); //$NON-NLS-1$
@@ -128,7 +144,9 @@ public class RetrieveTask extends ExplorerTask<ExplorerTask<Boolean, String>, St
                     } else {
                         state = CMove.process(params, callingNode.getDicomNode(), node.getDicomNode(),
                             callingNode.getAeTitle(), progress, dcmParams);
-                        dicomListener.stop();
+                        if (dicomListener != null) {
+                            dicomListener.stop();
+                        }
                     }
                 } else if (RetrieveType.WADO == type) {
                     List<AbstractDicomNode> webNodes = AbstractDicomNode.loadDicomNodes(AbstractDicomNode.Type.WEB,
@@ -167,11 +185,12 @@ public class RetrieveTask extends ExplorerTask<ExplorerTask<Boolean, String>, St
                     }
 
                     WadoParameters wadoParameters =
-                        new WadoParameters(wadoURLs.get(0).toString(), false, null, null, null);
-                    ManifestBuilder manifest = new ManifestBuilder();
-                    manifest.fillSeries(params, callingNode.getDicomNodeWithOnlyAET(), node.getDicomNode(),
+                        new WadoParameters("local", wadoURLs.get(0).toString(), false, null, null, null); //$NON-NLS-1$
+                    CFindQueryResult query = new CFindQueryResult(wadoParameters);
+                    query.fillSeries(params, callingNode.getDicomNodeWithOnlyAET(), node.getDicomNode(),
                         dicomQrView.getDicomModel(), studies);
-                    String wadoXmlGenerated = manifest.xmlManifest(wadoParameters, null);
+                    ArcQuery arquery = new ArcQuery(Arrays.asList(query));
+                    String wadoXmlGenerated = arquery.xmlManifest(null);
                     if (wadoXmlGenerated == null) {
                         state = new DicomState(Status.UnableToProcess,
                             Messages.getString("RetrieveTask.msg_build_manifest"), null); //$NON-NLS-1$
@@ -218,7 +237,7 @@ public class RetrieveTask extends ExplorerTask<ExplorerTask<Boolean, String>, St
         if (errorMessage != null) {
             final String mes = errorMessage;
             final String errorTitle =
-                StringUtil.getEmpty2NullObject(dicomQrView.getComboDicomRetrieveType().getSelectedItem());
+                StringUtil.getEmptyStringIfNull(dicomQrView.getComboDicomRetrieveType().getSelectedItem());
             GuiExecutor.instance().execute(() -> JOptionPane.showMessageDialog(dicomQrView.getBasePanel(), mes,
                 errorTitle, JOptionPane.ERROR_MESSAGE));
         }

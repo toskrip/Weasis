@@ -1,9 +1,9 @@
 /*******************************************************************************
- * Copyright (c) 2016 Weasis Team and others.
+ * Copyright (c) 2009-2018 Weasis Team and others.
  * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
+ * are made available under the terms of the Eclipse Public License v2.0
  * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
+ * http://www.eclipse.org/legal/epl-v20.html
  *
  * Contributors:
  *     Nicolas Roduit - initial API and implementation
@@ -69,7 +69,8 @@ public class ZoomOp extends AbstractOp {
         Double zoomFactorX = (Double) params.get(P_RATIO_X);
         Double zoomFactorY = (Double) params.get(P_RATIO_Y);
 
-        if (zoomFactorX != null && zoomFactorY != null && (MathUtil.isDifferent(zoomFactorX, 1.0) || MathUtil.isDifferent(zoomFactorY, 1.0))) {
+        if (zoomFactorX != null && zoomFactorY != null
+            && (MathUtil.isDifferent(zoomFactorX, 1.0) || MathUtil.isDifferent(zoomFactorY, 1.0))) {
             ParameterBlock pb = new ParameterBlock();
             pb.addSource(source);
             pb.add(Math.abs(zoomFactorX.floatValue()));

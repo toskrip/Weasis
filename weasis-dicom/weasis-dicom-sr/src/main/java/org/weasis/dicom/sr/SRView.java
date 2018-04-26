@@ -1,9 +1,9 @@
 /*******************************************************************************
- * Copyright (c) 2016 Weasis Team and others.
+ * Copyright (c) 2009-2018 Weasis Team and others.
  * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
+ * are made available under the terms of the Eclipse Public License v2.0
  * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
+ * http://www.eclipse.org/legal/epl-v20.html
  *
  * Contributors:
  *     Nicolas Roduit - initial API and implementation
@@ -54,6 +54,7 @@ import org.weasis.core.ui.model.imp.XmlGraphicModel;
 import org.weasis.core.ui.model.layer.GraphicLayer;
 import org.weasis.core.ui.model.layer.LayerType;
 import org.weasis.core.ui.model.layer.imp.DefaultLayer;
+import org.weasis.dicom.codec.AbstractKOSpecialElement.Reference;
 import org.weasis.dicom.codec.DcmMediaReader;
 import org.weasis.dicom.codec.DicomImageElement;
 import org.weasis.dicom.codec.DicomMediaIO;
@@ -213,11 +214,11 @@ public class SRView extends JScrollPane implements SeriesViewerListener {
                         }
 
                         if (keyReferences != null) {
-                            // TODO Handle multiframe and select the current frame or SOPInstanceUID
-                            // int[] frames = ref.getReferencedFrameNumber();
-                            keyReferences.addKeyObject(TagD.getTagValue(s, Tag.StudyInstanceUID, String.class),
+                            Reference koRef = new Reference(TagD.getTagValue(s, Tag.StudyInstanceUID, String.class),
                                 TagD.getTagValue(s, Tag.SeriesInstanceUID, String.class),
-                                ref.getReferencedSOPInstanceUID(), ref.getReferencedSOPClassUID());
+                                ref.getReferencedSOPInstanceUID(), ref.getReferencedSOPClassUID(),
+                                ref.getReferencedFrameNumber());
+                            keyReferences.addKeyObject(koRef);
                             SeriesViewerFactory plugin = UIManager.getViewerFactory(DicomMediaIO.SERIES_MIMETYPE);
                             if (plugin != null && !(plugin instanceof MimeSystemAppFactory)) {
                                 addGraphicstoView(s.getMedia(0, null, null), imgRef);
@@ -278,23 +279,23 @@ public class SRView extends JScrollPane implements SeriesViewerListener {
                 layer.setLevel(305);
             }
 
-            if (!addLayer) { 
+            if (!addLayer) {
                 List<Graphic> models = modelList.getModels();
                 int size = 0;
-                synchronized (models ) {
+                synchronized (models) {
                     for (Graphic g : models) {
                         boolean sr = layer.equals(g.getLayer());
                         if (sr) {
-                            size ++;
+                            size++;
                         }
                     }
                 }
-                
-                if(imgRef.getGraphics().size() == size) {
+
+                if (imgRef.getGraphics().size() == size) {
                     return;
                 }
-                
-                if(size > 0) {
+
+                if (size > 0) {
                     modelList.deleteByLayer(layer);
                 }
             }

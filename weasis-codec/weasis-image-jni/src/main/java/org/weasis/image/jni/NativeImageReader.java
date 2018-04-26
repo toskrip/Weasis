@@ -1,9 +1,9 @@
 /*******************************************************************************
- * Copyright (c) 2016 Weasis Team and others.
+ * Copyright (c) 2009-2018 Weasis Team and others.
  * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
+ * are made available under the terms of the Eclipse Public License v2.0
  * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
+ * http://www.eclipse.org/legal/epl-v20.html
  *
  * Contributors:
  *     Nicolas Roduit - initial API and implementation
@@ -46,6 +46,8 @@ import javax.imageio.stream.ImageInputStream;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.sun.media.imageioimpl.common.ExtendImageParam;
 
 public abstract class NativeImageReader extends ImageReader {
     private static final Logger LOGGER = LoggerFactory.getLogger(NativeImageReader.class);
@@ -374,7 +376,7 @@ public abstract class NativeImageReader extends ImageReader {
             }
             if (infoImage.getBytesPerLine() <= 0) {
                 // TODO handle ICC profile
-                FileStreamSegment.adaptParametersFromStream(iis, mlImage);
+                FileStreamSegment.adaptParametersFromStream(iis, mlImage, param);
                 String error = decoder.readHeader(mlImage);
                 if (error != null) {
                     throw new IIOException("Native JPEG codec error: " + error);
@@ -401,8 +403,11 @@ public abstract class NativeImageReader extends ImageReader {
     }
 
     private void checkParameters(ImageParameters p, ImageReadParam param) {
-        if (param instanceof NativeImageReadParam) {
-            p.setSignedData(((NativeImageReadParam) param).isSignedData());
+        if (param instanceof ExtendImageParam) {
+            Boolean signed = ((ExtendImageParam) param).getSignedData();
+            if (signed != null) {
+                p.setSignedData(signed);
+            }
             p.setInitSignedData(true);
         }
         int bps = p.getBitsPerSample();
@@ -537,8 +542,7 @@ public abstract class NativeImageReader extends ImageReader {
             }
         }
         // Create a new raster and copy the data.
-        WritableRaster raster =
-            Raster.createWritableRaster(sm, db, offset);
+        WritableRaster raster = Raster.createWritableRaster(sm, db, offset);
 
         long stop = System.currentTimeMillis();
         LOGGER.debug("Building BufferedImage time: {} ms", stop - start); //$NON-NLS-1$

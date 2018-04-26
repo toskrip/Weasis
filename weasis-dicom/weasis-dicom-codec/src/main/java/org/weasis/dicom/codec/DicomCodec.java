@@ -1,9 +1,9 @@
 /*******************************************************************************
- * Copyright (c) 2016 Weasis Team and others.
+ * Copyright (c) 2009-2018 Weasis Team and others.
  * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
+ * are made available under the terms of the Eclipse Public License v2.0
  * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
+ * http://www.eclipse.org/legal/epl-v20.html
  *
  * Contributors:
  *     Nicolas Roduit - initial API and implementation
@@ -17,6 +17,7 @@ import java.util.Hashtable;
 import java.util.List;
 
 import org.dcm4che3.data.ItemPointer;
+import org.dcm4che3.data.SpecificCharacterSet;
 import org.dcm4che3.data.Tag;
 import org.dcm4che3.data.VR;
 import org.dcm4che3.imageio.plugins.rle.RLEImageReaderSpi;
@@ -156,6 +157,9 @@ public class DicomCodec implements Codec {
          */
         String weasisRootUID = BundleTools.SYSTEM_PREFERENCES.getProperty("weasis.dicom.root.uid", UIDUtils.getRoot()); //$NON-NLS-1$
         UIDUtils.setRoot(weasisRootUID);
+
+        // Set the default encoding (must contain ASCII)
+        SpecificCharacterSet.setDefaultCharacterSet("ISO_IR 100"); //$NON-NLS-1$
 
         // Register SPI in imageio registry with the classloader of this bundle (provides also the classpath for
         // discovering the SPI files). Here are the codecs:

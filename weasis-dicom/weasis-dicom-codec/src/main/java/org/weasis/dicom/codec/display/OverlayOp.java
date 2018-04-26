@@ -1,9 +1,9 @@
 /*******************************************************************************
- * Copyright (c) 2016 Weasis Team and others.
+ * Copyright (c) 2009-2018 Weasis Team and others.
  * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
+ * are made available under the terms of the Eclipse Public License v2.0
  * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
+ * http://www.eclipse.org/legal/epl-v20.html
  *
  * Contributors:
  *     Nicolas Roduit - initial API and implementation
@@ -21,16 +21,15 @@ import org.dcm4che3.data.Tag;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.weasis.core.api.gui.util.ActionW;
-import org.weasis.core.api.gui.util.JMVUtils;
 import org.weasis.core.api.image.AbstractOp;
 import org.weasis.core.api.image.ImageOpEvent;
 import org.weasis.core.api.image.ImageOpEvent.OpEvent;
 import org.weasis.core.api.image.MergeImgOp;
 import org.weasis.core.api.media.data.ImageElement;
 import org.weasis.core.api.media.data.TagW;
+import org.weasis.core.api.util.LangUtil;
 import org.weasis.dicom.codec.DicomMediaIO;
 import org.weasis.dicom.codec.PRSpecialElement;
-import org.weasis.dicom.codec.PresentationStateReader;
 import org.weasis.dicom.codec.TagD;
 import org.weasis.dicom.codec.utils.OverlayUtils;
 
@@ -83,7 +82,7 @@ public class OverlayOp extends AbstractOp {
             ImageElement image = (ImageElement) params.get(P_IMAGE_ELEMENT);
 
             if (image != null) {
-                boolean overlays = JMVUtils.getNULLtoFalse(image.getTagValue(TagW.HasOverlay));
+                boolean overlays = LangUtil.getNULLtoFalse((Boolean) image.getTagValue(TagW.HasOverlay));
 
                 if (overlays && image.getMediaReader() instanceof DicomMediaIO) {
                     DicomMediaIO reader = (DicomMediaIO) image.getMediaReader();

@@ -1,9 +1,9 @@
 /*******************************************************************************
- * Copyright (c) 2016 Weasis Team and others.
+ * Copyright (c) 2009-2018 Weasis Team and others.
  * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
+ * are made available under the terms of the Eclipse Public License v2.0
  * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
+ * http://www.eclipse.org/legal/epl-v20.html
  *
  * Contributors:
  *     Nicolas Roduit - initial API and implementation
@@ -33,7 +33,7 @@ import org.weasis.core.api.media.data.Series;
 import org.weasis.core.api.media.data.TagReadable;
 import org.weasis.core.api.media.data.TagUtil;
 import org.weasis.core.api.media.data.TagW;
-import org.weasis.core.api.media.data.Thumbnail;
+import org.weasis.core.api.media.data.Thumbnailable;
 import org.weasis.core.api.util.StringUtil;
 import org.weasis.dicom.codec.TagD;
 import org.weasis.dicom.explorer.DicomExplorer;
@@ -90,14 +90,12 @@ public class RetrieveTreeModel {
         int index = Collections.binarySearch(children, seriesNode, DicomSorter.SERIES_COMPARATOR);
         index = index < 0 ? -(index + 1) : index;
         studyNode.insert(seriesNode, index);
-
-        return;
     }
 
     public static synchronized DefaultTreeModel buildModel(DicomModel dicomModel) {
         Collection<MediaSeriesGroup> patients = dicomModel.getChildren(MediaSeriesGroupNode.rootNode);
-        DefaultMutableTreeNode rootNode =
-            new DefaultMutableTreeNode(patients.isEmpty() ? Messages.getString("RetrieveTreeModel.no_pat") : DicomExplorer.ALL_PATIENTS); //$NON-NLS-1$
+        DefaultMutableTreeNode rootNode = new DefaultMutableTreeNode(
+            patients.isEmpty() ? Messages.getString("RetrieveTreeModel.no_pat") : DicomExplorer.ALL_PATIENTS); //$NON-NLS-1$
         for (MediaSeriesGroup pt : patients) {
             DefaultMutableTreeNode patientNode = new DefaultMutableTreeNode(pt, true);
             for (MediaSeriesGroup study : dicomModel.getChildren(pt)) {
@@ -162,7 +160,7 @@ public class RetrieveTreeModel {
 
         public String getToolTipText() {
             TagReadable s = (TagReadable) getUserObject();
-            Thumbnail thumb = (Thumbnail) s.getTagValue(TagW.Thumbnail);
+            Thumbnailable thumb = (Thumbnailable) s.getTagValue(TagW.Thumbnail);
             if (thumb != null) {
                 try {
                     File path = thumb.getThumbnailPath();

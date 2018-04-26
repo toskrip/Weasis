@@ -1,9 +1,9 @@
 /*******************************************************************************
- * Copyright (c) 2016 Weasis Team and others.
+ * Copyright (c) 2009-2018 Weasis Team and others.
  * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
+ * are made available under the terms of the Eclipse Public License v2.0
  * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
+ * http://www.eclipse.org/legal/epl-v20.html
  *
  * Contributors:
  *     Nicolas Roduit - initial API and implementation
@@ -55,9 +55,9 @@ import com.github.lgooddatepicker.tableeditors.TimeTableEditor;
 @SuppressWarnings("serial")
 public abstract class AcquireMetadataPanel extends JPanel implements TableModelListener {
     protected final String title;
-    protected final  JLabel label = new JLabel();
+    protected final JLabel label = new JLabel();
     protected final JTable table;
-    protected final  JScrollPane tableScroll;
+    protected final JScrollPane tableScroll;
     protected AcquireImageInfo imageInfo;
     protected TitledBorder titleBorder;
 
@@ -291,7 +291,7 @@ public abstract class AcquireMetadataPanel extends JPanel implements TableModelL
             settings.setFontVetoedDate(FontTools.getFont11());
             Color btnBack = d.getDatePicker().getBackground();
             JTextField tfSearch = new JTextField();
-            settings.setColor(DateArea.BackgroundOverallCalendarPanel, tfSearch .getBackground());
+            settings.setColor(DateArea.BackgroundOverallCalendarPanel, tfSearch.getBackground());
             settings.setColor(DateArea.BackgroundMonthAndYearNavigationButtons, btnBack);
             settings.setColor(DateArea.CalendarBackgroundNormalDates, btnBack);
 

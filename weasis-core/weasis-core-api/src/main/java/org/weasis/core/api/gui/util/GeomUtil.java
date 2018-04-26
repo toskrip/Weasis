@@ -1,9 +1,9 @@
 /*******************************************************************************
- * Copyright (c) 2016 Weasis Team and others.
+ * Copyright (c) 2009-2018 Weasis Team and others.
  * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
+ * are made available under the terms of the Eclipse Public License v2.0
  * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
+ * http://www.eclipse.org/legal/epl-v20.html
  *
  * Contributors:
  *     Nicolas Roduit - initial API and implementation
@@ -19,7 +19,7 @@ import java.awt.geom.Rectangle2D;
 import java.util.List;
 
 public final class GeomUtil {
-    
+
     private GeomUtil() {
     }
 
@@ -76,7 +76,7 @@ public final class GeomUtil {
      * @return angle in the range of [ -pi ; pi ]
      */
     public static double getSmallestRotationAngleRad(double angle) {
-        double a  = angle % (2 * Math.PI);
+        double a = angle % (2 * Math.PI);
         if (Math.abs(a) > Math.PI) {
             a -= Math.signum(a) * (2.0 * Math.PI);
         }
@@ -89,7 +89,7 @@ public final class GeomUtil {
      * @return angle in the range of [ -180 ; 180 ]
      */
     public static double getSmallestRotationAngleDeg(double angle) {
-        double a  = angle % 360.0;
+        double a = angle % 360.0;
         if (Math.abs(a) > 180.0) {
             a -= Math.signum(a) * 360.0;
         }
@@ -251,7 +251,8 @@ public final class GeomUtil {
             return null;
         }
 
-        Point2D p = lineIntersection(line, new Line2D.Double(rect.getMinX(), rect.getMinY(), rect.getMaxX(), rect.getMinY()));
+        Point2D p =
+            lineIntersection(line, new Line2D.Double(rect.getMinX(), rect.getMinY(), rect.getMaxX(), rect.getMinY()));
         if (p == null) {
             p = lineIntersection(line,
                 new Line2D.Double(rect.getMinX(), rect.getMaxY(), rect.getMaxX(), rect.getMaxY()));

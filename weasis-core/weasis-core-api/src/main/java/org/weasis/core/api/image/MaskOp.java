@@ -1,9 +1,9 @@
 /*******************************************************************************
- * Copyright (c) 2016 Weasis Team and others.
+ * Copyright (c) 2009-2018 Weasis Team and others.
  * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
+ * are made available under the terms of the Eclipse Public License v2.0
  * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
+ * http://www.eclipse.org/legal/epl-v20.html
  *
  * Contributors:
  *     Nicolas Roduit - initial API and implementation
@@ -64,7 +64,8 @@ public class MaskOp extends AbstractOp {
         Boolean mask = (Boolean) params.get(P_SHOW);
         Area area = (Area) params.get(P_SHAPE);
 
-        if (mask != null && mask && area != null && !area.equals(new Area(new Rectangle(0, 0, source.getWidth(), source.getHeight())))) {
+        if (mask != null && mask && area != null
+            && !area.equals(new Area(new Rectangle(0, 0, source.getWidth(), source.getHeight())))) {
             Integer transparency = (Integer) params.get(P_GRAY_TRANSPARENCY);
             Byte[] color = getMaskColor();
             if (transparency == null && isBlack(color)) {
@@ -89,7 +90,7 @@ public class MaskOp extends AbstractOp {
 
     private static PlanarImage getEmptyImage(Byte[] bandValues, RenderedImage source) {
         RenderingHints hints = new RenderingHints(JAI.KEY_IMAGE_LAYOUT, new ImageLayout(source));
-        return ConstantDescriptor.create((float) source.getWidth() , (float) source.getHeight(), bandValues, hints);
+        return ConstantDescriptor.create((float) source.getWidth(), (float) source.getHeight(), bandValues, hints);
     }
 
     private boolean isBlack(Byte[] color) {

@@ -1,9 +1,9 @@
 /*******************************************************************************
- * Copyright (c) 2016 Weasis Team and others.
+ * Copyright (c) 2009-2018 Weasis Team and others.
  * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
+ * are made available under the terms of the Eclipse Public License v2.0
  * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
+ * http://www.eclipse.org/legal/epl-v20.html
  *
  * Contributors:
  *     Nicolas Roduit - initial API and implementation
@@ -19,8 +19,8 @@ import javax.media.jai.JAI;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.weasis.core.api.Messages;
-import org.weasis.core.api.gui.util.JMVUtils;
 import org.weasis.core.api.gui.util.MathUtil;
+import org.weasis.core.api.util.LangUtil;
 
 public class CropOp extends AbstractOp {
     private static final Logger LOGGER = LoggerFactory.getLogger(CropOp.class);
@@ -70,7 +70,7 @@ public class CropOp extends AbstractOp {
                 pb.add((float) area.width).add((float) area.height);
                 result = JAI.create("crop", pb, null); //$NON-NLS-1$
 
-                if (JMVUtils.getNULLtoFalse(params.get(P_SHIFT_TO_ORIGIN))) {
+                if (LangUtil.getNULLtoFalse((Boolean) params.get(P_SHIFT_TO_ORIGIN))) {
                     float diffw = (float) source.getMinX() - result.getMinX();
                     float diffh = (float) source.getMinY() - result.getMinY();
                     if (MathUtil.isDifferentFromZero(diffw) || MathUtil.isDifferentFromZero(diffh)) {

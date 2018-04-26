@@ -1,9 +1,9 @@
 /*******************************************************************************
- * Copyright (c) 2016 Weasis Team and others.
+ * Copyright (c) 2009-2018 Weasis Team and others.
  * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
+ * are made available under the terms of the Eclipse Public License v2.0
  * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
+ * http://www.eclipse.org/legal/epl-v20.html
  *
  * Contributors:
  *     Nicolas Roduit - initial API and implementation
@@ -34,6 +34,7 @@ import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.Set;
 import java.util.TreeSet;
+import java.util.regex.Pattern;
 
 import javax.media.jai.LookupTableJAI;
 import javax.xml.stream.XMLInputFactory;
@@ -55,7 +56,6 @@ import org.slf4j.LoggerFactory;
 import org.weasis.core.api.gui.util.MathUtil;
 import org.weasis.core.api.image.util.CIELab;
 import org.weasis.core.api.media.data.MediaSeriesGroup;
-import org.weasis.core.api.media.data.TagReadable;
 import org.weasis.core.api.media.data.TagUtil;
 import org.weasis.core.api.media.data.TagW;
 import org.weasis.core.api.media.data.TagW.TagType;
@@ -545,40 +545,6 @@ public class DicomMediaUtils {
         int minInValue = signed ? -(1 << (stored - 1)) : 0;
         int maxInValue = signed ? (1 << (stored - 1)) - 1 : (1 << stored) - 1;
         return result < minInValue ? minInValue : result > maxInValue ? maxInValue : result;
-    }
-
-    public static String buildPatientPseudoUID(TagReadable tagable) {
-        String patientID = TagD.getTagValue(tagable, Tag.PatientID, String.class);
-        String issuerOfPatientID = TagD.getTagValue(tagable, Tag.IssuerOfPatientID, String.class);
-        String patientName = TagD.getTagValue(tagable, Tag.PatientName, String.class);
-
-        return buildPatientPseudoUID(patientID, issuerOfPatientID, patientName);
-    }
-
-    public static String buildPatientPseudoUID(String patientID, String issuerOfPatientID, String patientName) {
-        /*
-         * IHE RAD TF-­‐2: 4.16.4.2.2.5.3
-         *
-         * The Image Display shall not display FrameSets for multiple patients simultaneously. Only images with exactly
-         * the same value for Patient’s ID (0010,0020) and Patient’s Name (0010,0010) shall be displayed at the same
-         * time (other Patient-level attributes may be different, empty or absent). Though it is possible that the same
-         * patient may have slightly different identifying attributes in different DICOM images performed at different
-         * sites or on different occasions, it is expected that such differences will have been reconciled prior to the
-         * images being provided to the Image Display (e.g., in the Image Manager/Archive or by the Portable Media
-         * Creator).
-         */
-        // Build a global identifier for the patient.
-        StringBuilder buffer = new StringBuilder(patientID == null ? TagW.NO_VALUE : patientID);
-        if (StringUtil.hasText(issuerOfPatientID)) {
-            // patientID + issuerOfPatientID => should be unique globally
-            buffer.append(issuerOfPatientID);
-        }
-        if (patientName != null) {
-            buffer.append(patientName.toUpperCase());
-        }
-
-        return buffer.toString();
-
     }
 
     public static void setTag(Map<TagW, Object> tags, TagW tag, Object value) {
@@ -1159,7 +1125,8 @@ public class DicomMediaUtils {
         }
     }
 
-    public static Attributes createDicomPR(Attributes dicomSourceAttribute, String seriesInstanceUID, String sopInstanceUID) {
+    public static Attributes createDicomPR(Attributes dicomSourceAttribute, String seriesInstanceUID,
+        String sopInstanceUID) {
 
         final int[] patientStudyAttributes = { Tag.SpecificCharacterSet, Tag.StudyDate, Tag.StudyTime,
             Tag.StudyDescription, Tag.AccessionNumber, Tag.IssuerOfAccessionNumberSequence, Tag.ReferringPhysicianName,
@@ -1170,7 +1137,8 @@ public class DicomMediaUtils {
 
         // TODO implement other ColorSoftcopyPresentationStateStorageSOPClass...
         pr.setString(Tag.SOPClassUID, VR.UI, UID.GrayscaleSoftcopyPresentationStateStorageSOPClass);
-        pr.setString(Tag.SOPInstanceUID, VR.UI, StringUtil.hasText(sopInstanceUID) ? sopInstanceUID : UIDUtils.createUID());
+        pr.setString(Tag.SOPInstanceUID, VR.UI,
+            StringUtil.hasText(sopInstanceUID) ? sopInstanceUID : UIDUtils.createUID());
         Date now = new Date();
         pr.setDate(Tag.PresentationCreationDateAndTime, now);
         pr.setDate(Tag.ContentDateAndTime, now);
@@ -1531,7 +1499,7 @@ public class DicomMediaUtils {
         if (attribute != null) {
             String val = xmler.getAttributeValue(null, attribute);
             if (val != null) {
-                String[] strs = val.split(separator);
+                String[] strs = val.split(Pattern.quote(separator));
                 TemporalAccessor[] vals = new TemporalAccessor[strs.length];
                 for (int i = 0; i < strs.length; i++) {
                     if (TagType.DICOM_TIME.equals(type)) {
@@ -1570,7 +1538,7 @@ public class DicomMediaUtils {
     }
 
     public static void fillAttributes(Attributes dataset, final TagW tag, final Object val, ElementDictionary dic) {
-        if (dataset != null) {
+        if (dataset != null && tag != null) {
             TagType type = tag.getType();
             int id = tag.getId();
             String key = dic.keywordOf(id);

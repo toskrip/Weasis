@@ -1,9 +1,9 @@
 /*******************************************************************************
- * Copyright (c) 2016 Weasis Team and others.
+ * Copyright (c) 2009-2018 Weasis Team and others.
  * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
+ * are made available under the terms of the Eclipse Public License v2.0
  * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
+ * http://www.eclipse.org/legal/epl-v20.html
  *
  * Contributors:
  *     Nicolas Roduit - initial API and implementation
@@ -27,7 +27,8 @@ import org.weasis.acquire.explorer.core.bean.SeriesGroup;
 import org.weasis.acquire.explorer.gui.central.AcquireTabPanel;
 import org.weasis.acquire.explorer.gui.central.SerieButton;
 import org.weasis.acquire.explorer.gui.dialog.AcquireNewSerieDialog;
-import org.weasis.base.explorer.list.AThumbnailList;
+import org.weasis.base.explorer.JIThumbnailCache;
+import org.weasis.base.explorer.list.AbstractThumbnailList;
 import org.weasis.base.explorer.list.IThumbnailModel;
 import org.weasis.core.api.gui.util.JMVUtils;
 import org.weasis.core.api.image.ImageOpNode;
@@ -38,17 +39,17 @@ import org.weasis.core.api.util.StringUtil;
 import org.weasis.core.ui.util.DefaultAction;
 
 @SuppressWarnings({ "serial" })
-public class AcquireCentralThumnailList<E extends MediaElement> extends AThumbnailList<E> {
+public class AcquireCentralThumnailList<E extends MediaElement> extends AbstractThumbnailList<E> {
 
     private AcquireTabPanel acquireTabPanel;
 
-    public AcquireCentralThumnailList() {
-        super();
+    public AcquireCentralThumnailList(JIThumbnailCache thumbCache) {
+        super(thumbCache);
     }
 
     @Override
     public IThumbnailModel<E> newModel() {
-        return new AcquireCentralThumbnailModel<>(this);
+        return new AcquireCentralThumbnailModel<>(this, thumbCache);
     }
 
     public void setAcquireTabPanel(AcquireTabPanel acquireTabPanel) {

@@ -1,9 +1,9 @@
 /*******************************************************************************
- * Copyright (c) 2016 Weasis Team and others.
+ * Copyright (c) 2009-2018 Weasis Team and others.
  * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
+ * are made available under the terms of the Eclipse Public License v2.0
  * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
+ * http://www.eclipse.org/legal/epl-v20.html
  *
  * Contributors:
  *     Nicolas Roduit - initial API and implementation
@@ -31,11 +31,11 @@ import org.weasis.core.api.image.util.Unit;
 import org.weasis.core.ui.Messages;
 import org.weasis.core.ui.editor.image.PixelInfo;
 import org.weasis.core.ui.editor.image.ViewCanvas;
+import org.weasis.core.ui.model.graphic.GraphicLabel;
 import org.weasis.core.ui.model.utils.bean.AdvancedShape;
 import org.weasis.core.ui.model.utils.bean.AdvancedShape.ScaleInvariantShape;
 import org.weasis.core.ui.model.utils.bean.MeasureItem;
 import org.weasis.core.ui.model.utils.bean.Measurement;
-import org.weasis.core.ui.model.utils.imp.DefaultGraphicLabel;
 import org.weasis.core.ui.util.MouseEventDouble;
 
 @XmlType(name = "pixelInfo")
@@ -119,9 +119,9 @@ public class PixelInfoGraphic extends AnnotationGraphic {
             }
             labelBounds = new Rectangle.Double();
             labelBounds.setFrameFromCenter(ptBox.getX(), ptBox.getY(),
-                ptBox.getX() + labelWidth / 2.0 + DefaultGraphicLabel.GROWING_BOUND, ptBox.getY()
-                    + labelHeight * (labels == null ? 1 : labels.length)  / 2.0 + DefaultGraphicLabel.GROWING_BOUND);
-            GeomUtil.growRectangle(labelBounds, DefaultGraphicLabel.GROWING_BOUND);
+                ptBox.getX() + labelWidth / 2.0 + GraphicLabel.GROWING_BOUND,
+                ptBox.getY() + labelHeight * (labels == null ? 1 : labels.length) / 2.0 + GraphicLabel.GROWING_BOUND);
+            GeomUtil.growRectangle(labelBounds, GraphicLabel.GROWING_BOUND);
             if (line != null) {
                 newShape.addLinkSegmentToInvariantShape(line, ptBox, labelBounds, getDashStroke(lineThickness), true);
 

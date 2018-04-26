@@ -1,15 +1,16 @@
 /*******************************************************************************
- * Copyright (c) 2016 Weasis Team and others.
+ * Copyright (c) 2009-2018 Weasis Team and others.
  * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
+ * are made available under the terms of the Eclipse Public License v2.0
  * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
+ * http://www.eclipse.org/legal/epl-v20.html
  *
  * Contributors:
  *     Nicolas Roduit - initial API and implementation
  *******************************************************************************/
 package org.weasis.core.api.image;
 
+import java.awt.Color;
 import java.awt.GridBagConstraints;
 import java.awt.Insets;
 
@@ -21,6 +22,7 @@ public class LayoutConstraints extends GridBagConstraints
     public static final int SPACE = 3;
     private String type;
     private int layoutID;
+    private Color color;
 
     public LayoutConstraints(String type, int layoutID, int gridx, int gridy, int gridwidth, int gridheight,
         double weightx, double weighty, int anchor, int fill) {
@@ -44,7 +46,7 @@ public class LayoutConstraints extends GridBagConstraints
     public int getLayoutID() {
         return layoutID;
     }
-    
+
     @Override
     public int compareTo(LayoutConstraints o) {
         return layoutID < o.layoutID ? -1 : (layoutID == o.layoutID ? 0 : 1);
@@ -53,6 +55,14 @@ public class LayoutConstraints extends GridBagConstraints
     @Override
     public LayoutConstraints copy() {
         return new LayoutConstraints(this);
+    }
+
+    public Color getColor() {
+        return color;
+    }
+
+    public void setColor(Color color) {
+        this.color = color;
     }
 
 }

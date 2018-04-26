@@ -1,9 +1,9 @@
 /*******************************************************************************
- * Copyright (c) 2016 Weasis Team and others.
+ * Copyright (c) 2009-2018 Weasis Team and others.
  * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
+ * are made available under the terms of the Eclipse Public License v2.0
  * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
+ * http://www.eclipse.org/legal/epl-v20.html
  *
  * Contributors:
  *     Nicolas Roduit - initial API and implementation
@@ -23,6 +23,7 @@ import org.osgi.framework.FrameworkUtil;
 import org.weasis.acquire.explorer.AcquireManager;
 import org.weasis.acquire.explorer.Messages;
 import org.weasis.acquire.explorer.gui.AcquireToolBar;
+import org.weasis.base.explorer.JIThumbnailCache;
 import org.weasis.base.viewer2d.EventManager;
 import org.weasis.core.api.gui.InsertableUtil;
 import org.weasis.core.api.media.data.ImageElement;
@@ -41,11 +42,11 @@ public class ImageGroupPane extends ViewerPlugin<ImageElement> {
 
     public final List<Toolbar> toolBar = Collections.synchronizedList(new ArrayList<Toolbar>(1));
 
-    public final AcquireTabPanel tabbedPane = new AcquireTabPanel();
+    public final AcquireTabPanel tabbedPane;
 
-    public ImageGroupPane(String pluginName) {
+    public ImageGroupPane(String pluginName, JIThumbnailCache thumbCache) {
         super(pluginName);
-
+        this.tabbedPane = new AcquireTabPanel(thumbCache);
         // Add standard toolbars
         final BundleContext context = FrameworkUtil.getBundle(this.getClass()).getBundleContext();
         String bundleName = context.getBundle().getSymbolicName();

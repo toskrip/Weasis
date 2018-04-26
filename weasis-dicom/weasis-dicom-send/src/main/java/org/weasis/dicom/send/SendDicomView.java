@@ -1,10 +1,10 @@
 package org.weasis.dicom.send;
 /*******************************************************************************
- * Copyright (c) 2016 Weasis Team and others.
+ * Copyright (c) 2009-2018 Weasis Team and others.
  * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
+ * are made available under the terms of the Eclipse Public License v2.0
  * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
+ * http://www.eclipse.org/legal/epl-v20.html
  *
  * Contributors:
  *     Nicolas Roduit - initial API and implementation
@@ -43,13 +43,13 @@ import org.weasis.core.api.gui.task.CircularProgressBar;
 import org.weasis.core.api.gui.util.AbstractItemDialogPage;
 import org.weasis.core.api.gui.util.AppProperties;
 import org.weasis.core.api.gui.util.GuiExecutor;
-import org.weasis.core.api.gui.util.JMVUtils;
 import org.weasis.core.api.media.data.MediaElement;
 import org.weasis.core.api.media.data.MediaSeries;
 import org.weasis.core.api.media.data.Series;
 import org.weasis.core.api.media.data.TagW;
 import org.weasis.core.api.service.BundleTools;
 import org.weasis.core.api.util.FileUtil;
+import org.weasis.core.api.util.LangUtil;
 import org.weasis.core.api.util.StringUtil;
 import org.weasis.core.api.util.ThreadUtil;
 import org.weasis.core.ui.model.GraphicModel;
@@ -173,7 +173,8 @@ public class SendDicomView extends AbstractItemDialogPage implements ExportDicom
         executor.execute(task);
     }
 
-    private boolean sendDicomFiles(final CheckTreeModel model, final ExplorerTask<Boolean, String> t) throws IOException {
+    private boolean sendDicomFiles(final CheckTreeModel model, final ExplorerTask<Boolean, String> t)
+        throws IOException {
         dicomModel
             .firePropertyChange(new ObservableEvent(ObservableEvent.BasicAction.LOADING_START, dicomModel, null, t));
         File exportDir = FileUtil.createTempDir(AppProperties.buildAccessibleTempDirectory("tmp", "send")); //$NON-NLS-1$ //$NON-NLS-2$
@@ -225,7 +226,8 @@ public class SendDicomView extends AbstractItemDialogPage implements ExportDicom
         return true;
     }
 
-    private void writeDicom(ExplorerTask<Boolean, String> task, File writeDir, CheckTreeModel model) throws IOException {
+    private void writeDicom(ExplorerTask<Boolean, String> task, File writeDir, CheckTreeModel model)
+        throws IOException {
         synchronized (this) {
             ArrayList<String> uids = new ArrayList<>();
             TreePath[] paths = model.getCheckingPaths();
@@ -265,7 +267,7 @@ public class SendDicomView extends AbstractItemDialogPage implements ExportDicom
                     dcm.saveToFile(new File(destinationDir, iuid));
                 } else if (node.getUserObject() instanceof Series) {
                     MediaSeries<?> s = (MediaSeries<?>) node.getUserObject();
-                    if (JMVUtils.getNULLtoFalse(s.getTagValue(TagW.ObjectToSave))) {
+                    if (LangUtil.getNULLtoFalse((Boolean) s.getTagValue(TagW.ObjectToSave))) {
                         Series<?> series = (Series<?>) s.getTagValue(CheckTreeModel.SourceSeriesForPR);
                         if (series != null) {
                             String seriesInstanceUID = UIDUtils.createUID();

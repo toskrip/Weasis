@@ -1,14 +1,16 @@
 /*******************************************************************************
- * Copyright (c) 2016 Weasis Team and others.
+ * Copyright (c) 2009-2018 Weasis Team and others.
  * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
+ * are made available under the terms of the Eclipse Public License v2.0
  * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
+ * http://www.eclipse.org/legal/epl-v20.html
  *
  * Contributors:
  *     Nicolas Roduit - initial API and implementation
  *******************************************************************************/
 package org.weasis.core.ui.util;
+
+import java.util.Objects;
 
 import javax.swing.table.AbstractTableModel;
 
@@ -18,7 +20,7 @@ public class SimpleTableModel extends AbstractTableModel {
 
     private String[] columnNames =
         { Messages.getString("SimpleTableModel.param"), Messages.getString("SimpleTableModel.val") }; //$NON-NLS-1$ //$NON-NLS-2$
-    private Object[][] data = {};
+    private final Object[][] data;
     private final boolean editable;
 
     public SimpleTableModel(String[] columnNames, Object[][] data) {
@@ -26,12 +28,8 @@ public class SimpleTableModel extends AbstractTableModel {
     }
 
     public SimpleTableModel(String[] columnNames, Object[][] data, boolean editable) {
-        if (columnNames != null) {
-            this.columnNames = columnNames;
-        }
-        if (data != null) {
-            this.data = data;
-        }
+        this.columnNames = Objects.requireNonNull(columnNames);
+        this.data = Objects.requireNonNull(data);
         this.editable = editable;
     }
 

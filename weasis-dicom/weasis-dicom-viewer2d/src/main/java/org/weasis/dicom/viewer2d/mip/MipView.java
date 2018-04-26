@@ -1,9 +1,9 @@
 /*******************************************************************************
- * Copyright (c) 2016 Weasis Team and others.
+ * Copyright (c) 2009-2018 Weasis Team and others.
  * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
+ * are made available under the terms of the Eclipse Public License v2.0
  * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
+ * http://www.eclipse.org/legal/epl-v20.html
  *
  * Contributors:
  *     Nicolas Roduit - initial API and implementation
@@ -13,6 +13,7 @@ package org.weasis.dicom.viewer2d.mip;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import javax.swing.ImageIcon;
 import javax.swing.JDialog;
@@ -142,7 +143,7 @@ public class MipView extends View2d {
                 Messages.getString("MipView.monitoring_proc"), Messages.getString("MipView.init"), 0, 2 * extend + 1)) { //$NON-NLS-1$ //$NON-NLS-2$
                 @Override
                 public void run() {
-                    final List<DicomImageElement> dicoms = new ArrayList<DicomImageElement>();
+                    final List<DicomImageElement> dicoms = new ArrayList<>();
                     try {
                         taskMonitor.setMillisToPopup(1250);
                         SeriesBuilder.applyMipParameters(taskMonitor, view, ser, dicoms, mipType, extend, fullSeries);
@@ -226,7 +227,7 @@ public class MipView extends View2d {
 
         public MipProcess(String name, TaskMonitor taskMonitor) {
             super(name);
-            this.taskMonitor = taskMonitor;
+            this.taskMonitor = Objects.requireNonNull(taskMonitor);
         }
 
     }

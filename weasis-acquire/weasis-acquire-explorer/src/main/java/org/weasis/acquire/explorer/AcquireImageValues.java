@@ -1,9 +1,9 @@
 /*******************************************************************************
- * Copyright (c) 2016 Weasis Team and others.
+ * Copyright (c) 2009-2018 Weasis Team and others.
  * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
+ * are made available under the terms of the Eclipse Public License v2.0
  * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
+ * http://www.eclipse.org/legal/epl-v20.html
  *
  * Contributors:
  *     Nicolas Roduit - initial API and implementation
@@ -14,8 +14,11 @@ import java.awt.Point;
 import java.awt.Rectangle;
 import java.util.Optional;
 
+import org.weasis.core.api.gui.util.MathUtil;
 import org.weasis.core.api.image.util.Unit;
 import org.weasis.core.api.util.Copyable;
+
+import com.privatejgoodies.common.base.Objects;
 
 /**
  * Store all modifiables values. Enable to compare two objects for dirty check.
@@ -199,7 +202,7 @@ public class AcquireImageValues implements Copyable<AcquireImageValues> {
         if (brightness != other.brightness) {
             return false;
         }
-        if (Double.doubleToLongBits(calibrationRatio) != Double.doubleToLongBits(other.calibrationRatio)) {
+        if (MathUtil.isDifferent(calibrationRatio, other.calibrationRatio)) {
             return false;
         }
         if (calibrationUnit != other.calibrationUnit) {
@@ -231,10 +234,7 @@ public class AcquireImageValues implements Copyable<AcquireImageValues> {
         if (rotation != other.rotation) {
             return false;
         }
-        if (ratio != other.ratio) {
-            return false;
-        }
-        return true;
+        return Objects.equals(ratio, other.ratio);
     }
 
     @Override

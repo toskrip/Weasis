@@ -1,9 +1,9 @@
 /*******************************************************************************
- * Copyright (c) 2016 Weasis Team and others.
+ * Copyright (c) 2009-2018 Weasis Team and others.
  * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
+ * are made available under the terms of the Eclipse Public License v2.0
  * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
+ * http://www.eclipse.org/legal/epl-v20.html
  *
  * Contributors:
  *     Nicolas Roduit - initial API and implementation
@@ -17,6 +17,7 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
@@ -181,7 +182,7 @@ public class LoadRemoteDicomManifest extends ExplorerTask<Boolean, String> {
                 uri = new URL(path).toURI();
             }
 
-            List<LoadSeries> wadoTasks = DownloadManager.buildDicomSeriesFromXml(uri, dicomModel);
+            Collection<LoadSeries> wadoTasks = DownloadManager.buildDicomSeriesFromXml(uri, dicomModel);
             iter.remove();
 
             if (wadoTasks != null) {
@@ -195,8 +196,8 @@ public class LoadRemoteDicomManifest extends ExplorerTask<Boolean, String> {
         }
     }
 
-    private void startDownloadingSeries(List<LoadSeries> series, boolean downloadImmediately) {
-        for (final LoadSeries loadSeries : series) {
+    private void startDownloadingSeries(Collection<LoadSeries> wadoTasks, boolean downloadImmediately) {
+        for (final LoadSeries loadSeries : wadoTasks) {
             DownloadManager.addLoadSeries(loadSeries, dicomModel, downloadImmediately);
         }
 
